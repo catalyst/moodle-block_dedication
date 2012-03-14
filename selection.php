@@ -1,59 +1,71 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-    require_once("../../config.php");
-    require_once($CFG->libdir.'/blocklib.php');
+require_once("../../config.php");
+require_once('dedication_form.php');
 
-    require_login();
+global $DB, $OUTPUT, $PAGE, $CFG;
 
-    $pageid = required_param('pageid', PARAM_INT);
-    $instanceid = required_param('instanceid', PARAM_INT);
-    $sesskey = required_param('sesskey', PARAM_RAW);
-    $pinned = optional_param('pinned', 0, PARAM_INT);
+require_login();
 
-    if (! $course = get_record("course", "id", $pageid) ) {
-        print_error('invalidcourse');
-    }
+// Required params
+$courseid = required_param('courseid', PARAM_INT);
+$instanceid = required_param('instanceid', PARAM_INT);
+$sesskey = required_param('sesskey', PARAM_RAW);
 
-    if (!$course->category) {
-        print_error('invalidcourse');
-    }
+// Check for a valid course
+$course = $DB->get_record("course", array("id" => $courseid));
+if (!$course || !$course->category) {
+    print_error('invalidcourse');
+}
 
-    require_login($course);
+require_course_login($course);
 
-    if (!confirm_sesskey($sesskey)) {
-        print_error('invalidrequest');
-    }
+if (!confirm_sesskey($sesskey)) {
+    print_error('invalidrequest');
+}
 
-    $dedicationblock = get_record('block', 'name', 'dedication');
-    if ($pinned) {
-        if ($blockinstance = get_record('block_pinned', 'id', $instanceid, 'blockid', $dedicationblock->id)) {
-            $blockcontext = get_context_instance(CONTEXT_COURSE, $pageid);
-        } else {
-            print_error('invalidrequest');
-        }
-    } else {
-        if ($blockinstance = get_record('block_instance', 'id', $instanceid, 'blockid', $dedicationblock->id, 'pageid', $course->id)) {
-            $blockcontext = get_context_instance(CONTEXT_BLOCK, $blockinstance->id);
-        } else {
-            print_error('invalidrequest');
-        }
-    }
+// Obtain dedication block instance context
+$blockinstance = $DB->get_record('block_instances', array('id' => $instanceid, 'blockname' => 'dedication'));
+if (!$blockinstance) {
+    print_error('invalidrequest');
+}
 
-    require_capability('block/dedication:use', $blockcontext);
+// Require capability to use dedication block
+require_capability('block/dedication:use', get_context_instance(CONTEXT_BLOCK, $blockinstance->id));
 
-    $strblocktitle = get_string('blocktitle', 'block_dedication');
-    if ($course->category) {
-        print_header("$course->shortname: $strblocktitle", "$course->fullname",
-                 "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> $strblocktitle", "");
-    } else {
-        print_header("$course->shortname: $strblocktitle", "$course->fullname",
-                 "$strblocktitle", "");
-    }
+// Page format
+$PAGE->set_pagelayout('incourse');
+$PAGE->set_pagetype('course-view-' . $course->format);
+$PAGE->set_url($FULLME);
+$PAGE->set_title($course->shortname . ': ' . get_string('blocktitle', 'block_dedication'));
+$PAGE->set_heading($course->fullname);
+$PAGE->set_cacheable(true);
 
-    print_heading(get_string('select', 'block_dedication'));
-    print_box_start();
-    include('selection.html');
-    print_box_end();
-    print_footer($course);
+// Page start
+echo $OUTPUT->header();
+echo $OUTPUT->box_start();
+echo $OUTPUT->heading(get_string('select', 'block_dedication'));
 
+// Form display
+$mform = new dedication_block_selection_form($CFG->wwwroot . '/blocks/dedication/dedication.php?courseid=' . $courseid . '&instanceid=' . $instanceid . '&sesskey=' . $sesskey);
+$mform->set_data(array('limit' => 3600, 'mintime' => $course->startdate));
+$mform->display();
+
+// Page end
+echo $OUTPUT->box_end();
+echo $OUTPUT->footer();
 ?>

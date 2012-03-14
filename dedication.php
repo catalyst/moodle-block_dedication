@@ -1,423 +1,157 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-    require_once("../../config.php");
+global $DB, $CFG, $PAGE;
 
-    require_login();
+require_once("../../config.php");
 
-    $courseid = required_param('courseid', PARAM_INT);
-    $instanceid = required_param('instanceid', PARAM_INT);
-    $sesskey = required_param('sesskey', PARAM_RAW);
+require_login();
+
+// Required params
+$courseid = required_param('courseid', PARAM_INT);
+$instanceid = required_param('instanceid', PARAM_INT);
+$sesskey = required_param('sesskey', PARAM_RAW);
+
+// Require course login & session key
+$course = $DB->get_record("course", array("id" => $courseid));
+if (!$course || !$course->category) {
+    print_error('invalidcourse');
+}
+
+require_course_login($course);
+
+if (!confirm_sesskey($sesskey)) {
+    print_error('invalidrequest');
+}
+
+// Require capability to use this plugin
+if (!$blockinstance = $DB->get_record('block_instances', array('id' => $instanceid, 'blockname' => 'dedication'))) {
+    print_error('invalidrequest');
+}
+require_capability('block/dedication:use', get_context_instance(CONTEXT_BLOCK, $blockinstance->id));
+
+// Require additional libs
+require_once('dedication_lib.php');
+require_once('dedication_form.php');
+
+// Obtain $mintime, $maxtime, $limit params
+$mform = new dedication_block_selection_form();
+$data = $mform->get_data();
+if ($data) {
+    // Params from form
+    $mintime = $data->mintime;
+    $maxtime = $data->maxtime;
+    $limit = $data->limit;
+    unset($data);
+} else {
+    // Params from petition
+    $mintime = required_param('mintime', PARAM_INT);
+    $maxtime = required_param('maxtime', PARAM_INT);
     $limit = required_param('limit', PARAM_INT);
-    $userid = optional_param('userid', 0, PARAM_INT);
-    $startday = optional_param('startday', 0, PARAM_INT);
-    $startmonth = optional_param('startmonth', 0, PARAM_INT);
-    $startyear = optional_param('startyear', 0, PARAM_INT);
-    $starthour = optional_param('starthour', 0, PARAM_INT);
-    $startminute = optional_param('startminute', 0, PARAM_INT);
-    $endday = optional_param('endday', 0, PARAM_INT);
-    $endmonth = optional_param('endmonth', 0, PARAM_INT);
-    $endyear = optional_param('endyear', 0, PARAM_INT);
-    $endhour = optional_param('endhour', 0, PARAM_INT);
-    $endminute = optional_param('endminute', 0, PARAM_INT);
-    $mintime = optional_param('mintime', 0, PARAM_INT);
-    $maxtime = optional_param('maxtime', 0, PARAM_INT);
-    $calculateall = optional_param('calculateall', 0, PARAM_INT);
-    $downloadxls = optional_param('downloadxls', 0, PARAM_INT);
-    $sort = optional_param('sort', '', PARAM_ALPHA);
-    $pinned = optional_param('pinned', 0, PARAM_INT);
+}
 
-    if (! $course = get_record("course", "id", $courseid) ) {
-        print_error('invalidcourse');
-    }
+// Other optional params
+$userid = optional_param('userid', 0, PARAM_INT); // To show dedication of an user
+$calculateall = optional_param('calculateall', 0, PARAM_INT); // To show dedication of all users
+$downloadxls = optional_param('downloadxls', 0, PARAM_INT); // To generate XLS file with dedication data
+$sort = optional_param('sort', '', PARAM_ALPHA); // To sort user list
 
-    if (!$course->category) {
-        print_error('invalidcourse');
-    }
+// Base URL with to all required params
+$baseurl = $CFG->wwwroot.'/blocks/dedication/dedication.php?courseid='."$courseid&instanceid=$instanceid&sesskey=$sesskey&mintime=$mintime&maxtime=$maxtime&limit=$limit";
 
-    require_login($course);
+// In $data we will put page contents inside mainly inside dedication_lib.php functions
+// $data->header : header before table
+// $data->table  : table contents
+// $data->footer : footer after table
+if ($userid) {
 
-    if (!confirm_sesskey($sesskey)) {
-        print_error('invalidrequest');
-    }
+    // Dedication time for an user
+    $data = get_user_dedication_table($courseid, $userid, $baseurl, $mintime, $maxtime, $limit, $sort);
 
-    $dedicationblock = get_record('block', 'name', 'dedication');
-    if ($pinned) {
-        if ($blockinstance = get_record('block_pinned', 'id', $instanceid, 'blockid', $dedicationblock->id)) {
-            $blockcontext = get_context_instance(CONTEXT_COURSE, $courseid);
+} else {
+
+    // Obtain all students enrolled in this course
+    $students = get_enrolled_users(get_context_instance(CONTEXT_COURSE, $course->id));
+    if($students) {
+        if ($calculateall) {
+            if ($downloadxls) {
+                get_all_users_dedication_xls($students, $course, $baseurl, $mintime, $maxtime, $limit, $calculateall, $sort);
+                exit;
+            }
+            else {
+                // Dedication time for all students
+                $data = get_all_users_dedication_table($students, $courseid, $baseurl, $mintime, $maxtime, $limit, $calculateall, $sort);
+            }
         } else {
-            print_error('invalidrequest');
+            // List of all users in this course
+            $data = get_users_table($students, $baseurl, $mintime, $maxtime, $limit, $calculateall, $sort);
         }
     } else {
-        if ($blockinstance = get_record('block_instance', 'id', $instanceid, 'blockid', $dedicationblock->id, 'pageid', $course->id)) {
-            $blockcontext = get_context_instance(CONTEXT_BLOCK, $blockinstance->id);
-        } else {
-            print_error('invalidrequest');
-        }
+        $data->header = get_string('nomembers', 'block_dedication');
     }
 
-    require_capability('block/dedication:use', $blockcontext);
+}
 
-    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+// Page format
+$PAGE->set_pagelayout('incourse');
+$PAGE->set_pagetype('course-view-' . $course->format);
+$PAGE->set_url($FULLME);
+$PAGE->set_title($course->shortname . ': ' . get_string('blocktitle', 'block_dedication'));
+$PAGE->set_heading($course->fullname);
+$PAGE->set_cacheable(true);
 
-    if (!$mintime & !$maxtime) {
-        $mintime = make_timestamp($startyear, $startmonth, $startday, $starthour, $startminute, 0);
-        $maxtime = make_timestamp($endyear, $endmonth, $endday, $endhour, $endminute, 0);
+// START PAGE: layout, headers, title, boxes...
+echo $OUTPUT->header();
+echo $OUTPUT->box_start();
+if(isset($data->header)) {
+    echo $OUTPUT->heading($data->header);
+} else {
+    $a->strmintime = userdate($mintime);
+    $a->strmaxtime = userdate($maxtime);
+    echo $OUTPUT->heading(get_string('dedicationall', 'block_dedication', $a));
+}
+
+// PAGE CONTENTS
+// Form with a button: to download xls or to calculate dedication for all students
+if(!$userid) {
+    if($calculateall) {
+        $buttontext = get_string('downloaddedication', 'block_dedication');
+        $buttonurl = $baseurl . '&calculateall=1&downloadxls=1';
+    } else {
+        $buttontext = get_string('showdedication', 'block_dedication');
+        $buttonurl = $baseurl . '&calculateall=1';
     }
-
-    $limitinseconds = $limit*60;
-
-    $strblocktitle = get_string('blocktitle', 'block_dedication');
-
-    if (!$downloadxls) {
-        if ($course->category) {
-            print_header("$course->shortname: $strblocktitle", "$course->fullname",
-                     "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> $strblocktitle", "");
-        } else {
-            print_header("$course->shortname: $strblocktitle", "$course->fullname",
-                     "$strblocktitle", "");
-        }
-    }
-
-    if ($userid) { /// DETAILED DEDICATION OF A COURSE USER
-
-        require_capability('moodle/course:view', $context, $userid, $doanything=false);
-
-        $baseurl = $CFG->wwwroot."/blocks/dedication/dedication.php?courseid=$courseid&mintime=$mintime&maxtime=$maxtime&limit=$limit&userid=$userid&instanceid=$instanceid&pinned=$pinned&sesskey=$sesskey";
-
-        if ($courseuser = get_record('user', 'id', $userid)) {
-
-            $a->firstname = $courseuser->firstname;
-            $a->lastname = $courseuser->lastname;
-            $a->strmintime = userdate($mintime);
-            $a->strmaxtime = userdate($maxtime);
-
-            print_heading(get_string('userdedication', 'block_dedication', $a));
-
-            if ($logs = get_records_select("log", "course = $courseid AND userid = ".$userid." AND time >= $mintime AND time <= $maxtime", "time ASC", "id,time")) {
-
-                if ($sort == 'startasc') {
-                    $strstartsession = "<a href='$baseurl&sort=startdesc'>".get_string('sessionstart', 'block_dedication')."</a> <img src='".$CFG->pixpath."/t/down.gif' />";
-                } else if ($sort == 'startdesc') {
-                    $strstartsession = "<a href='$baseurl&sort=startasc'>".get_string('sessionstart', 'block_dedication')."</a> <img src='".$CFG->pixpath."/t/up.gif' />";
-                } else {
-                    $strstartsession = "<a href='$baseurl&sort=startasc'>".get_string('sessionstart', 'block_dedication')."</a>";
-                }
-
-                if ($sort == 'durationasc') {
-                    $strduration = "<a href='$baseurl&sort=durationdesc'>".get_string('duration', 'block_dedication')."</a> <img src='".$CFG->pixpath."/t/down.gif' />";
-                } else if ($sort == 'durationdesc') {
-                    $strduration = "<a href='$baseurl&sort=durationasc'>".get_string('duration', 'block_dedication')."</a> <img src='".$CFG->pixpath."/t/up.gif' />";
-                } else {
-                    $strduration = "<a href='$baseurl&sort=durationasc'>".get_string('duration', 'block_dedication')."</a>";
-                }
-
-                $table->head = array ($strstartsession, $strduration);
-                $table->align = array ("center", "center");
-                $table->width = "0%";
-
-                $previouslog = array_shift($logs);
-                $previouslogtime = $previouslog->time;
-                $sessionstart = $previouslogtime;
-                $totaldedication = 0;
-
-                $sortsessions = array();
-
-                foreach ($logs as $log) {
-
-                    if (($log->time - $previouslogtime) > $limitinseconds) {
-
-                        $dedication = $previouslogtime - $sessionstart;
-
-                        $totaldedication += $dedication;
-
-                        if ($dedication > 59) {
-
-                            $sortsessions[] = array ("startsession" => $sessionstart, "dedication" => $dedication);
-
-                        }
-
-                        $sessionstart = $log->time;
-                    }
-
-                    $previouslogtime = $log->time;
-
-                }
-
-                $dedication = $previouslogtime - $sessionstart;
-
-                $totaldedication += $dedication;
-
-                if ($dedication > 59) {
-
-                    $sortsessions[] = array ("startsession" => $sessionstart, "dedication" => $dedication);
-
-                }
-
-                if ($sort) {
-                    foreach ($sortsessions as $key => $sortsession) {
-                        $startsessions[$key] = $sortsession["startsession"];
-                        $dedications[$key] = $sortsession["dedication"];
-                    }
-                }
-
-                switch ($sort) {
-                    case 'startasc':
-                        array_multisort($startsessions, SORT_ASC, $sortsessions);
-                        break;
-                    case 'startdesc':
-                        array_multisort($startsessions, SORT_DESC, $sortsessions);
-                        break;
-                    case 'durationasc':
-                        array_multisort($dedications, SORT_ASC, $sortsessions);
-                        break;
-                    case 'durationdesc':
-                        array_multisort($dedications, SORT_DESC, $sortsessions);
-                        break;
-                }
-
-                foreach ($sortsessions as $sortsession) {
-
-                    $table->data[] = array (userdate($sortsession["startsession"]), format_dedication($sortsession["dedication"]));
-
-                }
-
-                echo "<br/><center>";
-                print_string('totaldedication', 'block_dedication', format_dedication($totaldedication));
-                echo "</center><br/><br/>";
-
-                print_table($table);
-
-            } else {
-
-                echo "<br/><center>";
-                print_string('totaldedication', 'block_dedication', format_dedication(0));
-                echo "</center><br/><br/>";
-
-            }
-        } else {
-            print_error('unknownuseraction');
-        }
-
-    } else { /// COURSE USERS TABLE
-		print_r($context);
-        if ($students = get_users_by_capability($context, 'moodle/course:view', '', '', '', '', '', '', false)) {
-
-            $baseurl = $CFG->wwwroot."/blocks/dedication/dedication.php?courseid=$courseid&mintime=$mintime&maxtime=$maxtime&limit=$limit&calculateall=$calculateall&instanceid=$instanceid&pinned=$pinned&sesskey=$sesskey";
-
-            if ($sort == 'firstnameasc') {
-                $strfirstname = "<a href='$baseurl&sort=firstnamedesc'>".get_string("firstname")."</a> <img src='".$CFG->pixpath."/t/down.gif' />";
-            } else if ($sort == 'firstnamedesc') {
-                $strfirstname = "<a href='$baseurl&sort=firstnameasc'>".get_string("firstname")."</a> <img src='".$CFG->pixpath."/t/up.gif' />";
-            } else {
-                $strfirstname = "<a href='$baseurl&sort=firstnameasc'>".get_string("firstname")."</a>";
-            }
-
-            if ($sort == 'lastnameasc') {
-                $strlastname = "<a href='$baseurl&sort=lastnamedesc'>".get_string("lastname")."</a> <img src='".$CFG->pixpath."/t/down.gif' />";
-            } else if ($sort == 'lastnamedesc') {
-                $strlastname = "<a href='$baseurl&sort=lastnameasc'>".get_string("lastname")."</a> <img src='".$CFG->pixpath."/t/up.gif' />";
-            } else {
-                $strlastname = "<a href='$baseurl&sort=lastnameasc'>".get_string("lastname")."</a>";
-            }
-
-
-            if ($calculateall) { /// COURSE USERS TABLE (WITH FIRSTNAME, LASTNAME AND DEDICATION)
-
-                if ($sort == 'dedicationasc') {
-                    $strdedication = "<a href='$baseurl&sort=dedicationdesc'>".get_string('dedication', 'block_dedication')."</a> <img src='".$CFG->pixpath."/t/down.gif' />";
-                } else if ($sort == 'dedicationdesc') {
-                    $strdedication = "<a href='$baseurl&sort=dedicationasc'>".get_string('dedication', 'block_dedication')."</a> <img src='".$CFG->pixpath."/t/up.gif' />";
-                } else {
-                    $strdedication = "<a href='$baseurl&sort=dedicationdesc'>".get_string('dedication', 'block_dedication')."</a>";
-                }
-
-                $table->head = array ("$strlastname, $strfirstname", $strdedication);
-                $table->align = array ("left", "center");
-                $table->width = "0%";
-
-                $sortusers = array();
-
-                foreach ($students as $student) {
-                    if ($logs = get_records_select("log", "course = $courseid AND userid = ".$student->id." AND time >= $mintime AND time <= $maxtime", "time ASC", "id,time")) {
-                        $previouslog = array_shift($logs);
-                        $previouslogtime = $previouslog->time;
-                        $sessionstart = $previouslogtime;
-                        $dedication = 0;
-
-                        foreach ($logs as $log) {
-                            if (($log->time - $previouslogtime) > $limitinseconds) {
-                                $dedication += $previouslogtime - $sessionstart;
-                                $sessionstart = $log->time;
-                            }
-                            $previouslogtime = $log->time;
-                        }
-                        $dedication += $previouslogtime - $sessionstart;
-                    } else {
-                        $dedication = 0;
-                    }
-                    $sortusers[] = array ("firstname" => $student->firstname, "lastname" => $student->lastname, "dedication" => $dedication, "id" => $student->id);
-                }
-
-                if ($sort) {
-                    foreach ($sortusers as $key => $sortuser) {
-                        $firstnames[$key] = strtolower($sortuser["firstname"]);
-                        $lastnames[$key] = strtolower($sortuser["lastname"]);
-                        $dedications[$key] = $sortuser["dedication"];
-                    }
-                }
-
-                switch ($sort) {
-                    case 'dedicationasc':
-                        array_multisort($dedications, SORT_ASC, $sortusers);
-                        break;
-                    case 'dedicationdesc':
-                        array_multisort($dedications, SORT_DESC, $sortusers);
-                        break;
-                    case 'lastnameasc':
-                        array_multisort($lastnames, SORT_ASC, $sortusers);
-                        break;
-                    case 'lastnamedesc':
-                        array_multisort($lastnames, SORT_DESC, $sortusers);
-                        break;
-                    case 'firstnameasc':
-                        array_multisort($firstnames, SORT_ASC, $sortusers);
-                        break;
-                    case 'firstnamedesc':
-                        array_multisort($firstnames, SORT_DESC, $sortusers);
-                        break;
-                }
-
-                foreach ($sortusers as $sortuser) {
-
-                    $name = "<a href='$baseurl&userid=".$sortuser["id"]."'>".$sortuser["lastname"].', '.$sortuser["firstname"].'</a>';
-
-                    $table->data[] = array ($name, format_dedication($sortuser["dedication"]));
-
-                }
-
-                if ($downloadxls) {
-
-                    require_once("../../lib/excellib.class.php");
-                    $downloadfilename = clean_filename("$course->shortname dedication.xls");
-                    $workbook = new MoodleExcelWorkbook("-");
-                    $workbook->send($downloadfilename);
-                    //$myxls =& $workbook->add_worksheet($strgrades);
-                    $myxls =& $workbook->add_worksheet("");
-                    $format =& $workbook->add_format();
-                    $format->set_num_format('[HH]:MM');
-
-                    $i = 0;
-                    foreach ($sortusers as $sortuser) {
-
-                        $myxls->write_string($i, 0, $sortuser["lastname"].', '.$sortuser["firstname"]);
-                        $myxls->write_number($i, 1, ($sortuser["dedication"]/86400), $format);
-                        $i++;
-
-                    }
-
-                    $workbook->close();
-                    exit;
-                }
-
-            } else { /// COURSE USERS TABLE (WITH FIRSTNAME AND LASTNAME ONLY)
-
-                $table->head = array ("$strlastname, $strfirstname");
-                $table->align = array ("left");
-                $table->width = "0%";
-
-                $baseurl = "dedication.php?courseid=$courseid&mintime=$mintime&maxtime=$maxtime&limit=$limit&instanceid=$instanceid&pinned=$pinned&sesskey=$sesskey";
-
-                if ($sort) {
-
-                    foreach ($students as $student) {
-                        $sortusers[] = array ("firstname" => $student->firstname, "lastname" => $student->lastname, "id" => $student->id);
-                    }
-                    foreach ($sortusers as $key => $sortuser) {
-                        $firstnames[$key] = strtolower($sortuser["firstname"]);
-                        $lastnames[$key] = strtolower($sortuser["lastname"]);
-                    }
-                    switch ($sort) {
-                        case 'lastnameasc':
-                            array_multisort($lastnames, SORT_ASC, $sortusers);
-                            break;
-                        case 'lastnamedesc':
-                            array_multisort($lastnames, SORT_DESC, $sortusers);
-                            break;
-                        case 'firstnameasc':
-                            array_multisort($firstnames, SORT_ASC, $sortusers);
-                            break;
-                        case 'firstnamedesc':
-                            array_multisort($firstnames, SORT_DESC, $sortusers);
-                            break;
-                    }
-                    foreach ($sortusers as $sortuser) {
-                        $name = "<a href='$baseurl&userid=".$sortuser["id"]."'>".$sortuser["lastname"].', '.$sortuser["firstname"].'</a>';
-                        $table->data[] = array ($name);
-                    }
-
-                } else {
-                    foreach ($students as $student) {
-                        $name = "<a href='$baseurl&userid=".$student->id."'>".$student->lastname.', '.$student->firstname.'</a>';
-                        $table->data[] = array ($name);
-                    }
-                }
-            }
-
-            $a->strmintime = userdate($mintime);
-            $a->strmaxtime = userdate($maxtime);
-
-            print_heading(get_string('dedicationall', 'block_dedication', $a));
-
-            echo '<form name="dedication" method="post" action="dedication.php">';
-            echo '<center>';
-            if (!$calculateall) {
-                echo '<input type="submit" value="'.get_string('showdedication', 'block_dedication').'" />';
-            } else {
-                echo '<input type="hidden" name="downloadxls" value="1"/>';
-                echo '<input type="submit" value="'.get_string('downloaddedication', 'block_dedication').'" />';
-            }
-            echo '</center>';
-            echo '<input type="hidden" name="courseid" value="'.$courseid.'"/>';
-            echo '<input type="hidden" name="limit" value="'.$limit.'"/>';
-            echo '<input type="hidden" name="mintime" value="'.$mintime.'"/>';
-            echo '<input type="hidden" name="maxtime" value="'.$maxtime.'"/>';
-            echo '<input type="hidden" name="calculateall" value="1"/>';
-            echo '<input type="hidden" name="instanceid" value="'.$instanceid.'"/>';
-            echo '<input type="hidden" name="pinned" value="'.$pinned.'"/>';
-            echo '<input type="hidden" name="sesskey" value="'.$sesskey.'"/>';
-            echo '</form><br><br>';
-
-            print_table($table);
-
-        } else {
-
-            print_heading(get_string('nomembers', 'block_dedication'));
-
-        }
-    }
-
-    print_footer($course);
-
-    function format_dedication($time) {
-
-        $a->hours = intval($time/3600);
-        $a->minutes = intval(fmod($time, 3600)/60);
-        return ($a->hours != 0 ? get_string('hoursandminutes', 'block_dedication', $a) : get_string('minutes', 'block_dedication', $a->minutes) );
-
-/*      /// CALCULATE IN SECONDS
-        $seconds = $time - $hours*3600 - $minutes*60;
-        if ($hours) {
-            $result = "$hours horas y $minutes minutos";
-        } else {
-            if ($minutes) {
-                $result = "$minutes minutos";
-            } else {
-                $result = "$seconds segundos";
-            }
-        }
-*/
-
-    }
-
+    echo '<form name="dedication" method="post" action="' . $buttonurl . '">';
+    echo '<center>';
+    echo '<input type="submit" value="' . $buttontext . '"/>';
+    echo '</center>';
+    echo '</form><br><br>';
+}
+
+// Table data
+if(isset($data->table)) {
+    echo html_writer::tag('center', html_writer::table($data->table));
+}
+
+if(isset($data->footer)) {
+    echo $OUTPUT->heading($data->footer);
+}
+
+// END PAGE
+echo $OUTPUT->box_end();
+echo $OUTPUT->footer();
 
 ?>
