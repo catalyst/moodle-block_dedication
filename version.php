@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-$plugin->version   = 2012020100;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2011070100;        // Requires this Moodle version
-$plugin->component = 'block_dedication'; // Full name of the plugin (used for diagnostics)
+$plugin->version   = 2012020100;
+$plugin->requires  = 2010112400;
+$plugin->component = 'block_dedication';
+$plugin->release   = 'Moodle 2.x';
