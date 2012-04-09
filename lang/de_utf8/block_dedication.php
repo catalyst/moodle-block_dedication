@@ -34,5 +34,5 @@ $string['showdedication'] = 'Kompletten Einsatz der Teilnehmer anzeigen';
 $string['start'] = 'Beginn des Zeitraums';
 $string['totaldedication'] = '<b>Kompletter Einsatz: </b> $a';
 $string['userdedication'] = 'Kurs Einsatz von $a->firstname $a->lastname <br> von: $a->strmintime <br> bis:  $a->strmaxtime.';
-
+$string['pluginname'] = $string['blockname'];
 ?>
