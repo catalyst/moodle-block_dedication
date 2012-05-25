@@ -13,9 +13,9 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
- 
+
 defined('MOODLE_INTERNAL') || die();
- 
-$plugin->version   = 2008112701;
+
+$plugin->version   = 2008112702;
 $plugin->requires  = 2007101509;
 $plugin->release  = '1.9.x';
