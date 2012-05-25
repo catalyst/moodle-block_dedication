@@ -7,6 +7,7 @@
  * @author     2008 Borja Rubio Reyes
  *             2011 Aday Talavera Hierro (update to Moodle 2.x)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @contributions French translation by Luiggi Sansonetti
  */
 
 This block allows to see the dedication estimated time to a Moodle course by
