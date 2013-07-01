@@ -33,7 +33,4 @@ $string['showdedication'] = 'Mostrar o tempo de acesso de todos os alunos';
 $string['start'] = 'In&iacute;cio do per&iacute;odo';
 $string['totaldedication'] = '<b>Tempo de acesso: </b> {$a}';
 $string['userdedication'] = 'Tempo de acesso de $a->firstname {$a->lastname} <br> desde: {$a->strmintime} <br> at�:  {$a->strmaxtime}.';
-
-// Moodle 2.0
-$string['pluginname'] = $string['blockname'];
-?>
+$string['pluginname'] = 'Tempo de acesso';

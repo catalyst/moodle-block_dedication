@@ -34,7 +34,4 @@ $string['showdedication'] = 'Amosar dedicación total dos membros';
 $string['start'] = 'Inicio do período';
 $string['totaldedication'] = '<b>Dedicación total: </b> {$a}';
 $string['userdedication'] = 'Dedicación ao curso de {$a->firstname} {$a->lastname} <br> desde: {$a->strmintime} <br> ata:  {$a->strmaxtime}.';
-
-// Moodle 2.0
-$string['pluginname'] = $string['blockname'];
-?>
+$string['pluginname'] = 'Dedicación ao curso';

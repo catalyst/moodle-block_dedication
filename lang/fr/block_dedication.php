@@ -35,7 +35,4 @@ $string['showdedication'] = 'Voir la durée totale pour tous les participants';
 $string['start'] = 'Début de la période';
 $string['totaldedication'] = '<b>Total du temps consacré au cours : </b> {$a}';
 $string['userdedication'] = 'Temps consacré au cours de : {$a->firstname} {$a->lastname} <br> depuis : {$a->strmintime} <br> jusqu\'à :  {$a->strmaxtime}.';
-
-// Moodle 2.0
-$string['pluginname'] = $string['blockname'];
-?>
+$string['pluginname'] = 'Temps consacré au cours';
