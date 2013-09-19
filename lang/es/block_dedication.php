@@ -34,4 +34,4 @@ $string['showdedication'] = 'Mostrar dedicación total de los miembros';
 $string['start'] = 'Inicio del periodo';
 $string['totaldedication'] = '<b>Dedicación total: </b> {$a}';
 $string['userdedication'] = 'Dedicación al curso de {$a->firstname} {$a->lastname} <br> desde: {$a->strmintime} <br> hasta:  {$a->strmaxtime}.';
-$string['pluginname'] = 'Dedicación al curso'];
+$string['pluginname'] = 'Dedicación al curso';
