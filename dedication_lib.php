@@ -31,11 +31,13 @@ function get_user_dedication_table($courseid, $userid, $baseurl, $mintime, $maxt
         print_error('unknownuseraction');
     }
 
+    $a = new stdClass();
     $a->firstname = $courseuser->firstname;
     $a->lastname = $courseuser->lastname;
     $a->strmintime = userdate($mintime);
     $a->strmaxtime = userdate($maxtime);
 
+    $data = new stdClass();
     $data->header = get_string('userdedication', 'block_dedication', $a);
 
     $logs = $DB->get_records_select("log", "course = $courseid AND userid = " . $userid . " AND time >= $mintime AND time <= $maxtime", array(), "time ASC", "id,time");
@@ -69,7 +71,7 @@ function get_user_dedication_table($courseid, $userid, $baseurl, $mintime, $maxt
         $sortsessions = array();
 
         foreach ($logs as $log) {
-
+            
             if (($log->time - $previouslogtime) > $limit) {
 
                 $dedication = $previouslogtime - $sessionstart;
@@ -119,7 +121,6 @@ function get_user_dedication_table($courseid, $userid, $baseurl, $mintime, $maxt
         }
 
         foreach ($sortsessions as $sortsession) {
-
             $table->data[] = array(userdate($sortsession["startsession"]), format_dedication($sortsession["dedication"]));
         }
 
@@ -194,6 +195,7 @@ function get_users_table($students, $baseurl, $mintime, $maxtime, $limit, $calcu
         }
     }
 
+    $data = new stdClass();
     $data->table = $table;
     return $data;
 }
@@ -240,6 +242,7 @@ function get_all_users_dedication_table($students, $courseid, $baseurl, $mintime
         $table->data[] = array($name, format_dedication($sortuser["dedication"]));
     }
 
+    $data = new stdClass();
     $data->table = $table;
     return $data;
 }
@@ -337,7 +340,7 @@ function get_all_users_dedication_sorted($students, $courseid, $baseurl, $mintim
 
 // Formats time
 function format_dedication($time) {
-
+    $a = new stdClass();
     $a->hours = intval($time / 3600);
     $a->minutes = intval(fmod($time, 3600) / 60);
     return ($a->hours != 0 ? get_string('hoursandminutes', 'block_dedication', $a) : get_string('minutes', 'block_dedication', $a->minutes) );

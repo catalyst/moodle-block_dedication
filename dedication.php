@@ -119,6 +119,7 @@ echo $OUTPUT->box_start();
 if(isset($data->header)) {
     echo $OUTPUT->heading($data->header);
 } else {
+    $a = new stdClass();
     $a->strmintime = userdate($mintime);
     $a->strmaxtime = userdate($maxtime);
     echo $OUTPUT->heading(get_string('dedicationall', 'block_dedication', $a));
