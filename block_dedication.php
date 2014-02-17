@@ -25,27 +25,57 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-class block_dedication extends block_list {
+class block_dedication extends block_base {
 
     function init() {
-        $this->title = get_string('blocktitle', 'block_dedication');
+        $this->title = get_string('pluginname', 'block_dedication');
+    }
+
+    function specialization() {
+        // Previous block versions didn't have config settings
+        if ($this->config === null) {
+            $this->config = new stdClass();
+        }
+        // Set always show_dedication config settings to avoid errors
+        if (!isset($this->config->show_dedication)) {
+            $this->config->show_dedication = 0;
+        }
     }
 
     function get_content() {
-        global $CFG, $USER;
+        global $OUTPUT, $USER;
 
-        if ($this->content !== NULL) {
+        if ($this->content !== null) {
             return $this->content;
         }
 
-        $this->content = new stdClass;
-        $this->content->items = array();
-        $this->content->icons = array();
+        if (empty($this->instance)) {
+            $this->content = '';
+            return $this->content;
+        }
+
+        $this->content = new stdClass();
+        $this->content->text = '';
         $this->content->footer = '';
 
+        if ($this->config->show_dedication == 1) {
+            require_once 'dedication_lib.php';
+            $mintime = $this->page->course->startdate;
+            $maxtime = time();
+            $dm = new block_dedication_manager($this->page->course, $mintime, $maxtime, $this->config->limit);
+            $dedication_time = $dm->get_user_dedication($USER, true);
+            $this->content->text .= html_writer::tag('p', get_string('dedication_estimation', 'block_dedication'));
+            $this->content->text .= html_writer::tag('p', block_dedication_manager::format_dedication($dedication_time));
+        }
+
         if (has_capability('block/dedication:use', get_context_instance(CONTEXT_BLOCK, $this->instance->id))) {
-            $script = $CFG->wwwroot . '/blocks/dedication/selection.php?courseid=' . $this->page->course->id . '&instanceid=' . $this->instance->id . '&sesskey=' . $USER->sesskey;
-            $this->content->footer = '<a title="' . get_string('calculate', 'block_dedication') . '" href="' . $script . '">' . get_string('calculate', 'block_dedication') . '</a>';
+            $this->content->footer .= html_writer::tag('hr', null);
+            $this->content->footer .= html_writer::tag('p', get_string('access_info', 'block_dedication'));
+            $url = new moodle_url('/blocks/dedication/dedication.php', array(
+                'courseid' => $this->page->course->id,
+                'instanceid' => $this->instance->id,
+            ));
+            $this->content->footer .= $OUTPUT->single_button($url, get_string('access_button', 'block_dedication'), 'get');
         }
 
         return $this->content;

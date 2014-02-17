@@ -14,24 +14,64 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-$string['blockname'] = 'Dedicación al curso';
-$string['blocktitle'] = 'Dedicación al curso';
-$string['calculate'] = 'Calcular...';
-$string['calculatededication'] = 'Continuar';
-$string['dedication:use'] = 'Consultar dedicación al curso';
-$string['dedication'] = 'Dedicación al curso';
-$string['dedicationall'] = 'Miembros del curso. Seleccione uno para ver su dedicación al curso detallada <br> desde: {$a->strmintime} <br> hasta:  {$a->strmaxtime}.';
-$string['downloaddedication'] = 'Descargar en formato Excel';
-$string['duration'] = 'Duración';
-$string['end'] = 'Fin del periodo';
-$string['hoursandminutes'] = '{$a->hours} horas y {$a->minutes} minutos';
+// Basic plugin strings
+$string['pluginname'] = 'Dedicación al curso';
+$string['pagetitle'] = '{$a}: dedicación al curso';
+
+// Capabilites
+$string['dedication:addinstance'] = 'Permitir añadir bloque de dedicación al curso';
+$string['dedication:use'] = 'Permitir usar bloque de dedicación al curso';
+
+// Block content
+$string['dedication_estimation'] = 'Tu tiempo de dedicación estimado es';
+$string['access_button'] = 'Herramienta de dedicación';
+$string['access_info'] = 'Sólo para profesores:';
+
+// Block form
+$string['show_dedication'] = 'Mostrar el tiempo de dedicación a los estudiantes';
+$string['show_dedication_help'] = 'Por defecto, el tiempo de dedicación sólo pueden verlo los profesores. Si marca esta opción, los alumnos podrán ver su tiempo de dedicación total en el bloque.';
+$string['regen_time'] = 'Tiempo de regeneración';
+$string['regen_time_help'] = 'Cuando se muestra el tiempo de dedicación a los alumnos, se guardan los cálculos realizados y no se vuelven a hacer hasta que pasa el tiempo de regeneración. Esto es para mejorar el tiempo de carga de la página.';
+
+// Tool form
+$string['form'] = 'Configuración de dedicación al curso';
+$string['form_help'] = 'La dedicación es estimada a partir del concepto de sesión y duración de la sesión, aplicado a las entradas de log.
+
+<strong>Clic:</strong> ada vez que un usuario accede a una página en Moodle se guarda una entrada en el log.
+
+<strong>Sesión:</strong> conjunto de dos o más clics consecutivos, cuyo tiempo transcurrido entre dos clics consecutivos no superar el máximos tiempo establecido.
+
+<strong>Duración de la sesión:</strong> tiempo transcurrido entre el primer y último clic de una sesión.
+
+<strong>Tiempo de dedicación:</strong> es la suma de las duraciones de las sesiones del usuario.';
+$string['form_text'] = 'Seleccione el rango de fechas y el tiempo máximo entre clics de una misma sesión.';
+$string['mintime'] = 'Inicio del período';
+$string['mintime_help'] = 'Considerar sólo las entradas de log creadas después de esta fecha';
+$string['maxtime'] = 'Fin del período';
+$string['maxtime_help'] = 'Considerar sólo las entradas de log creadas antes de esta fecha';
 $string['limit'] = 'Límite entre clics (en minutos)';
-$string['minutes'] = '{$a} minutos';
-$string['nomembers'] = 'No hay participantes en el curso.';
-$string['select'] = 'Seleccione el rango de fechas y el tiempo máximo entre clics de una misma sesión';
-$string['sessionstart'] = 'Inicio de la sesión';
-$string['showdedication'] = 'Mostrar dedicación total de los miembros';
-$string['start'] = 'Inicio del periodo';
-$string['totaldedication'] = '<b>Dedicación total: </b> {$a}';
-$string['userdedication'] = 'Dedicación al curso de {$a->firstname} {$a->lastname} <br> desde: {$a->strmintime} <br> hasta:  {$a->strmaxtime}.';
-$string['pluginname'] = 'Dedicación al curso'];
+$string['limit_help'] = 'El límite entre clics define si dos clics son parte de la misma sesión o no';
+$string['submit'] = 'Calcular';
+
+// Rows
+$string['dedicationrow'] = 'Dedicación al curso';
+$string['connectionratiorow'] = 'Conexiones por día';
+$string['sincerow'] = 'Desde';
+$string['torow'] = 'Hasta';
+$string['perioddiffrow'] = 'Tiempo transcurrido';
+
+// Headers
+$string['period'] = 'Período desde <em>{$a->mintime}</em> hasta <em>{$a->maxtime}</em>';
+$string['perioddiff'] = '<strong>Tiempo transcurrido:</strong>  {$a}';
+$string['totaldedication'] = '<strong>Dedicación total:</strong> {$a}';
+$string['meandedication'] = '<strong>Dedicación media:</strong> {$a}';
+
+// Actions
+// all action
+$string['dedicationall'] = 'Dedicación de todos los miembros del curso. Haz clic en el nombre de un miembro para ver su dedicación detallada.';
+// group action
+$string['dedicationgroup'] = 'Dedicación de todos los miembros del grupo <em>{$a}</em>. Haz clic en el nombre de un miembro para ver su dedicación detallada.';
+// user action
+$string['userdedication'] = 'Dedicación detallada de <em>{$a}</em>.';
+$string['sessionstart'] = 'Inicio de sesión';
+$string['sessionduration'] = 'Duración';
