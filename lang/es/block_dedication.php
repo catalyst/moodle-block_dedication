@@ -30,8 +30,6 @@ $string['access_info'] = 'Sólo para profesores:';
 // Block form
 $string['show_dedication'] = 'Mostrar el tiempo de dedicación a los estudiantes';
 $string['show_dedication_help'] = 'Por defecto, el tiempo de dedicación sólo pueden verlo los profesores. Si marca esta opción, los alumnos podrán ver su tiempo de dedicación total en el bloque.';
-$string['regen_time'] = 'Tiempo de regeneración';
-$string['regen_time_help'] = 'Cuando se muestra el tiempo de dedicación a los alumnos, se guardan los cálculos realizados y no se vuelven a hacer hasta que pasa el tiempo de regeneración. Esto es para mejorar el tiempo de carga de la página.';
 
 // Tool form
 $string['form'] = 'Configuración de dedicación al curso';

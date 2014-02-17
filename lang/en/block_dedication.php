@@ -30,8 +30,6 @@ $string['access_info'] = 'Only for teachers:';
 // Block form
 $string['show_dedication'] = 'Show dedication time to students';
 $string['show_dedication_help'] = 'By default, dedication time can only be viewed by teachers. This setting allow students to see their dedication time in the block.';
-$string['regen_time'] = 'Regeneration time';
-$string['regen_time_help'] = 'When dedication time is showed to students, all the calculations are stored and will not be calculated again until regeneration time pass. This is to improve page load performance.';
 
 // Tool form
 $string['form'] = 'Course dedication configuration';
