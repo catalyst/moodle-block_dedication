@@ -203,9 +203,9 @@ foreach ($view->header as $header) {
 }
 
 // Download button
-echo html_writer::start_div('download-dedication');
+echo html_writer::start_tag('div', array('class' => 'download-dedication'));
 echo $OUTPUT->single_button(new moodle_url($page_url, array('download' => true)), get_string('downloadexcel'), 'get');
-echo html_writer::end_div();
+echo html_writer::end_tag('div');
 
 // Format table headers if they exists
 if (!empty($view->table->head)) {
