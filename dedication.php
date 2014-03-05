@@ -27,7 +27,7 @@ $course = $DB->get_record("course", array("id" => $courseid), '*', MUST_EXIST);
 require_course_login($course);
 
 // Require capability to use this plugin in block context
-$context = context_block::instance($instanceid);
+$context = get_context_instance(CONTEXT_BLOCK, $instanceid);
 require_capability('block/dedication:use', $context);
 
 require_once('dedication_lib.php');
@@ -94,7 +94,7 @@ switch ($action) {
         $userid = required_param('id', PARAM_INT);
 
         $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
-        if (!is_enrolled(context_course::instance($course->id), $user)) {
+        if (!is_enrolled(get_context_instance(CONTEXT_COURSE, $course->id), $user)) {
             print_error('usernotincourse');
         }
 
@@ -140,7 +140,7 @@ switch ($action) {
         } else {
             // Get all students in this course or ordered by group
             if ($course->groupmode == NOGROUPS) {
-                $students = get_enrolled_users(context_course::instance($course->id));
+                $students = get_enrolled_users(get_context_instance(CONTEXT_COURSE, $course->id));
             } else {
                 $students = array();
                 foreach ($groups as $group) {
