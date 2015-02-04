@@ -22,6 +22,7 @@ define('BLOCK_DEDICATION_IGNORE_SESSION_TIME', 59);
 define('BLOCK_DEDICATION_DEFAULT_REGEN_TIME', 60 * 15);
 
 class block_dedication_manager {
+
     protected $course;
     protected $mintime;
     protected $maxtime;
@@ -272,7 +273,7 @@ class block_dedication_manager {
             return trim($omins . ' ' . $osecs);
         if ($secs)
             return $osecs;
-        return get_string('now');
+        return get_string('none');
     }
 
     // Formats ips
@@ -328,6 +329,5 @@ class block_dedication_manager {
 
         return $workbook;
     }
-}
 
-?>
+}
