@@ -68,7 +68,7 @@ class block_dedication extends block_base {
             $this->content->text .= html_writer::tag('p', block_dedication_manager::format_dedication($dedication_time));
         }
 
-        if (has_capability('block/dedication:use', get_context_instance(CONTEXT_BLOCK, $this->instance->id))) {
+        if (has_capability('block/dedication:use', context_block::instance($this->instance->id))) {
             $this->content->footer .= html_writer::tag('hr', null);
             $this->content->footer .= html_writer::tag('p', get_string('access_info', 'block_dedication'));
             $url = new moodle_url('/blocks/dedication/dedication.php', array(
