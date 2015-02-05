@@ -65,7 +65,7 @@ class block_dedication extends block_base {
             $dm = new block_dedication_manager($this->page->course, $mintime, $maxtime, $this->config->limit);
             $dedication_time = $dm->get_user_dedication($USER, true);
             $this->content->text .= html_writer::tag('p', get_string('dedication_estimation', 'block_dedication'));
-            $this->content->text .= html_writer::tag('p', block_dedication_manager::format_dedication($dedication_time));
+            $this->content->text .= html_writer::tag('p', block_dedication_utils::format_dedication($dedication_time));
         }
 
         if (has_capability('block/dedication:use', context_block::instance($this->instance->id))) {

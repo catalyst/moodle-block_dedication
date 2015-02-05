@@ -21,6 +21,7 @@ define('BLOCK_DEDICATION_IGNORE_SESSION_TIME', 59);
 // Default regeneration time in seconds
 define('BLOCK_DEDICATION_DEFAULT_REGEN_TIME', 60 * 15);
 
+// Generate dedication reports based in passed params
 class block_dedication_manager {
 
     protected $course;
@@ -35,12 +36,12 @@ class block_dedication_manager {
         $this->limit = $limit;
     }
 
-    function get_students_dedication($students) {
+    public function get_students_dedication($students) {
         global $DB;
 
         $rows = array();
 
-        $where = 'course = :courseid AND userid = :userid AND time >= :mintime AND time <= :maxtime';
+        $where = 'courseid = :courseid AND userid = :userid AND timecreated >= :mintime AND timecreated <= :maxtime';
         $params = array(
             'courseid' => $this->course->id,
             'userid' => 0,
@@ -53,7 +54,8 @@ class block_dedication_manager {
         foreach ($students as $user) {
             $daysconnected = array();
             $params['userid'] = $user->id;
-            $logs = $DB->get_records_select('log', $where, $params, 'time ASC', 'id,time');
+            $logs = block_dedication_utils::get_events_select($where, $params);
+
             if ($logs) {
                 $previouslog = array_shift($logs);
                 $previouslogtime = $previouslog->time;
@@ -73,21 +75,20 @@ class block_dedication_manager {
             } else {
                 $dedication = 0;
             }
-            $daysconnected = count($daysconnected);
             $groups = groups_get_user_groups($this->course->id, $user->id);
             $group = !empty($groups) && !empty($groups[0]) ? $groups[0][0] : 0;
             $rows[] = (object) array(
                 'user' => $user,
                 'groupid' => $group,
                 'dedicationtime' => $dedication,
-                'connectionratio' => round($daysconnected / $perioddays, 2),
+                'connectionratio' => round(count($daysconnected) / $perioddays, 2),
             );
         }
 
         return $rows;
     }
 
-    function download_students_dedication($rows) {
+    public function download_students_dedication($rows) {
         $groups = groups_get_all_groups($this->course->id);
 
         $headers = array(
@@ -116,27 +117,25 @@ class block_dedication_manager {
                 $row->user->lastname,
                 isset($groups[$row->groupid]) ? $groups[$row->groupid]->name : '',
                 round($row->dedicationtime / MINSECS),
-                block_dedication_manager::format_dedication($row->dedicationtime),
+                block_dedication_utils::format_dedication($row->dedicationtime),
                 $row->connectionratio,
             );
         }
 
         $rows = array_merge($headers, $rows);
 
-        return block_dedication_manager::generate_download("{$this->course->shortname}_dedication", $rows);
+        return block_dedication_utils::generate_download("{$this->course->shortname}_dedication", $rows);
     }
 
-    function get_user_dedication($user, $simple = false) {
-        global $DB;
-
-        $where = 'course = :courseid AND userid = :userid AND time >= :mintime AND time <= :maxtime';
+    public function get_user_dedication($user, $simple = false) {
+        $where = 'courseid = :courseid AND userid = :userid AND timecreated >= :mintime AND timecreated <= :maxtime';
         $params = array(
             'courseid' => $this->course->id,
             'userid' => $user->id,
             'mintime' => $this->mintime,
             'maxtime' => $this->maxtime
         );
-        $logs = $DB->get_records_select('log', $where, $params, 'time ASC', 'id,time,ip');
+        $logs = block_dedication_utils::get_events_select($where, $params);
 
         if ($simple) {
             // Return total dedication time in seconds
@@ -198,7 +197,8 @@ class block_dedication_manager {
         }
     }
 
-    function download_user_dedication($user, $rows) {
+    // Downloads user dedication with passed data
+    public function download_user_dedication($user) {
         $headers = array(
             array(
                 get_string('sincerow', 'block_dedication'),
@@ -219,24 +219,69 @@ class block_dedication_manager {
             )
         );
 
+        $rows = $this->get_user_dedication($user);
         foreach ($rows as $index => $row) {
             $rows[$index] = array(
                 $user->firstname,
                 $user->lastname,
                 userdate($row->start_date),
                 $row->dedicationtime,
-                block_dedication_manager::format_dedication($row->dedicationtime),
+                block_dedication_utils::format_dedication($row->dedicationtime),
                 implode(', ', $row->ips),
             );
         }
 
         $rows = array_merge($headers, $rows);
 
-        return block_dedication_manager::generate_download("{$this->course->shortname}_dedication", $rows);
+        return block_dedication_utils::generate_download("{$this->course->shortname}_dedication", $rows);
+    }
+
+}
+
+// Utils functions used by block dedication
+class block_dedication_utils {
+
+    public static $LOGSTORES = array('logstore_standard', 'logstore_legacy');
+
+    // Return formatted events from logstores
+    public static function get_events_select($selectwhere, array $params) {
+        $return = array();
+
+        static $allreaders = NULL;
+
+        if (is_null($allreaders)) {
+            $allreaders = get_log_manager()->get_readers();
+        }
+
+        $processed_readers = 0;
+
+        foreach (self::$LOGSTORES as $name) {
+            if (isset($allreaders[$name])) {
+                $reader = $allreaders[$name];
+                $events = $reader->get_events_select($selectwhere, $params, 'timecreated ASC', 0, 0);
+                foreach ($events as $event) {
+                    // Note: see \core\event\base to view base class of event
+                    $obj = new stdClass();
+                    $obj->time = $event->timecreated;
+                    $obj->ip = $event->get_logextra()['ip'];
+                    $return[] = $obj;
+                }
+                if (!empty($events)) {
+                    $processed_readers++;
+                }
+            }
+        }
+
+        // Sort mixed array by time ascending again only when more of a reader has added events to return array
+        if ($processed_readers > 1) {
+            usort($return, function($a, $b) { return $a->time > $b->time; });
+        }
+
+        return $return;
     }
 
     // Formats time based in Moodle function format_time($totalsecs)
-    static function format_dedication($totalsecs) {
+    public static function format_dedication($totalsecs) {
         $totalsecs = abs($totalsecs);
 
         $str = new stdClass();
@@ -277,17 +322,17 @@ class block_dedication_manager {
     }
 
     // Formats ips
-    static function format_ips($ips) {
-        return implode(', ', array_map('block_dedication_manager::link_ip', $ips));
+    public static function format_ips($ips) {
+        return implode(', ', array_map('block_dedication_utils::link_ip', $ips));
     }
 
     // Generates an linkable ip
-    static function link_ip($ip) {
+    public static function link_ip($ip) {
         return html_writer::link("http://en.utrace.de/?query=$ip", $ip, array('target' => '_blank'));
     }
 
     // Table styles
-    static function get_table_styles() {
+    public static function get_table_styles() {
         global $PAGE;
 
         // Twitter Bootstrap styling
@@ -306,11 +351,11 @@ class block_dedication_manager {
         return $styles;
     }
 
-    // Generate generic Excel file for download
-    static function generate_download($download_name, $rows) {
+    // Generates generic Excel file for download
+    public static function generate_download($download_name, $rows) {
         global $CFG;
 
-        require_once($CFG->libdir. '/excellib.class.php');
+        require_once($CFG->libdir . '/excellib.class.php');
 
         $workbook = new MoodleExcelWorkbook('-', 'excel5');
         $workbook->send(clean_filename($download_name));

@@ -85,7 +85,7 @@ $page_url->params(array(
 $view = new stdClass();
 $view->header = array();
 
-$table_styles = block_dedication_manager::get_table_styles();
+$table_styles = block_dedication_utils::get_table_styles();
 $view->table = new html_table();
 $view->table->attributes = array('class' => $table_styles['table_class'] . " table-$action");
 
@@ -99,27 +99,27 @@ switch ($action) {
         }
 
         $dm = new block_dedication_manager($course, $mintime, $maxtime, $limit);
-        $rows = $dm->get_user_dedication($user);
         if ($download) {
-            $dm->download_user_dedication($user, $rows);
+            $dm->download_user_dedication($user);
         }
 
         // Table formatting & total count
         $total_dedication = 0;
+        $rows = $dm->get_user_dedication($user);
         foreach ($rows as $index => $row) {
             $total_dedication += $row->dedicationtime;
             $rows[$index] = array(
                 userdate($row->start_date),
-                block_dedication_manager::format_dedication($row->dedicationtime),
-                block_dedication_manager::format_ips($row->ips),
+                block_dedication_utils::format_dedication($row->dedicationtime),
+                block_dedication_utils::format_ips($row->ips),
             );
         }
 
         $view->header[] = get_string('userdedication', 'block_dedication', $OUTPUT->user_picture($user, array('courseid' => $course->id)) . fullname($user));
         $view->header[] = get_string('period', 'block_dedication', (object) array('mintime' => userdate($mintime), 'maxtime' => userdate($maxtime)));
         $view->header[] = get_string('perioddiff', 'block_dedication', format_time($maxtime - $mintime));
-        $view->header[] = get_string('totaldedication', 'block_dedication', block_dedication_manager::format_dedication($total_dedication));
-        $view->header[] = get_string('meandedication', 'block_dedication', block_dedication_manager::format_dedication($total_dedication / count($rows)));
+        $view->header[] = get_string('totaldedication', 'block_dedication', block_dedication_utils::format_dedication($total_dedication));
+        $view->header[] = get_string('meandedication', 'block_dedication', block_dedication_utils::format_dedication($total_dedication / count($rows)));
 
         $view->table->head = array(get_string('sessionstart', 'block_dedication'), get_string('sessionduration', 'block_dedication'), 'IP');
         $view->table->data = $rows;
@@ -170,7 +170,7 @@ switch ($action) {
                 html_writer::link($user_url, $row->user->firstname),
                 html_writer::link($user_url, $row->user->lastname),
                 html_writer::link($group_url, isset($groups[$row->groupid]) ? $groups[$row->groupid]->name : ''),
-                block_dedication_manager::format_dedication($row->dedicationtime),
+                block_dedication_utils::format_dedication($row->dedicationtime),
                 $row->connectionratio
             );
         }
@@ -182,8 +182,8 @@ switch ($action) {
         }
         $view->header[] = get_string('period', 'block_dedication', (object) array('mintime' => userdate($mintime), 'maxtime' => userdate($maxtime)));
         $view->header[] = get_string('perioddiff', 'block_dedication', format_time($maxtime - $mintime));
-        $view->header[] = get_string('totaldedication', 'block_dedication', block_dedication_manager::format_dedication($total_dedication));
-        $view->header[] = get_string('meandedication', 'block_dedication', block_dedication_manager::format_dedication($total_dedication / count($rows)));
+        $view->header[] = get_string('totaldedication', 'block_dedication', block_dedication_utils::format_dedication($total_dedication));
+        $view->header[] = get_string('meandedication', 'block_dedication', block_dedication_utils::format_dedication($total_dedication / count($rows)));
 
         $view->table->head = array('', get_string('firstname'), get_string('lastname'), get_string('group'), get_string('dedicationrow', 'block_dedication'), get_string('connectionratiorow', 'block_dedication'));
         $view->table->data = $rows;
@@ -222,5 +222,3 @@ echo html_writer::table($view->table);
 // END PAGE
 echo $OUTPUT->box_end();
 echo $OUTPUT->footer();
-
-?>
