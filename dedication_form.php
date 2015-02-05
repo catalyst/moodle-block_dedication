@@ -49,5 +49,3 @@ class dedication_block_selection_form extends moodleform {
     }
 
 }
-
-?>

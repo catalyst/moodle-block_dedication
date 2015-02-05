@@ -86,5 +86,3 @@ class block_dedication extends block_base {
     }
 
 }
-
-?>
