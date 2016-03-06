@@ -101,6 +101,7 @@ switch ($action) {
         $dm = new block_dedication_manager($course, $mintime, $maxtime, $limit);
         if ($download) {
             $dm->download_user_dedication($user);
+            exit;
         }
 
         // Table formatting & total count
@@ -157,6 +158,7 @@ switch ($action) {
         $rows = $dm->get_students_dedication($students);
         if ($download) {
             $dm->download_students_dedication($rows);
+            exit;
         }
 
         // Table formatting & total count

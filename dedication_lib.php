@@ -357,8 +357,7 @@ class block_dedication_utils {
 
         require_once($CFG->libdir . '/excellib.class.php');
 
-        $workbook = new MoodleExcelWorkbook('-', 'excel5');
-        $workbook->send(clean_filename($download_name));
+        $workbook = new MoodleExcelWorkbook(clean_filename($download_name));        
 
         $myxls = $workbook->add_worksheet(get_string('pluginname', 'block_dedication'));
 
