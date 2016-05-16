@@ -14,24 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-// Basic plugin strings
+// Basic plugin strings.
 $string['pluginname'] = 'Course dedication';
 $string['pagetitle'] = '{$a}: course dedication';
 
-// Capabilites
+// Capabilites.
 $string['dedication:addinstance'] = 'Allow to add Course dedication block';
 $string['dedication:use'] = 'Allow to use Course dedication';
 
-// Block content
+// Block content.
 $string['dedication_estimation'] = 'Your estimated dedication time is';
 $string['access_button'] = 'Dedication tool';
 $string['access_info'] = 'Only for teachers:';
 
-// Block form
+// Block form.
 $string['show_dedication'] = 'Show dedication time to students';
 $string['show_dedication_help'] = 'By default, dedication time can only be viewed by teachers. This setting allow students to see their dedication time in the block.';
 
-// Tool form
+// Tool form.
 $string['form'] = 'Course dedication configuration';
 $string['form_help'] = 'Time is estimated based in the concepts of Session and Session duration applied to log entries.
 
@@ -52,25 +52,25 @@ $string['limit'] = 'Limit between clicks (in minutes)';
 $string['limit_help'] = 'The limit between clicks defines if two clicks are part of the same session or not';
 $string['submit'] = 'Calculate';
 
-// Rows
+// Rows.
 $string['dedicationrow'] = 'Course dedication';
 $string['connectionratiorow'] = 'Connections per day';
 $string['sincerow'] = 'Since';
 $string['torow'] = 'To';
 $string['perioddiffrow'] = 'Elapsed time';
 
-// Headers
+// Headers.
 $string['period'] = 'Period since <em>{$a->mintime}</em> to <em>{$a->maxtime}</em>';
 $string['perioddiff'] = '<strong>Elapsed time:</strong>  {$a}';
 $string['totaldedication'] = '<strong>Total dedication:</strong> {$a}';
 $string['meandedication'] = '<strong>Mean dedication:</strong> {$a}';
 
-// Actions
-// all action
+// Actions.
+// All action.
 $string['dedicationall'] = 'All course members dedication. Click on any name to see a detailed course dedication for it.';
-// group action
+// Group action.
 $string['dedicationgroup'] = 'All group <em>{$a}</em> members dedication. Choose any member to see a detailed course dedication for it.';
-// user action
+// User action.
 $string['userdedication'] = 'Detailed course dedication of <em>{$a}</em>.';
 $string['sessionstart'] = 'Session start';
 $string['sessionduration'] = 'Duration';

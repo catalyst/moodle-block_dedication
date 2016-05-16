@@ -14,14 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-// Default session time limit in seconds
+// Default session time limit in seconds.
 define('BLOCK_DEDICATION_DEFAULT_SESSION_LIMIT', 60 * 60);
-// Ignore sessions with a duration less than defined value in seconds
+// Ignore sessions with a duration less than defined value in seconds.
 define('BLOCK_DEDICATION_IGNORE_SESSION_TIME', 59);
-// Default regeneration time in seconds
+// Default regeneration time in seconds.
 define('BLOCK_DEDICATION_DEFAULT_REGEN_TIME', 60 * 15);
 
-// Generate dedication reports based in passed params
+// Generate dedication reports based in passed params.
 class block_dedication_manager {
 
     protected $course;
@@ -29,7 +29,7 @@ class block_dedication_manager {
     protected $maxtime;
     protected $limit;
 
-    function __construct($course, $mintime, $maxtime, $limit) {
+    public function __construct($course, $mintime, $maxtime, $limit) {
         $this->course = $course;
         $this->mintime = $mintime;
         $this->maxtime = $maxtime;
@@ -138,7 +138,7 @@ class block_dedication_manager {
         $logs = block_dedication_utils::get_events_select($where, $params);
 
         if ($simple) {
-            // Return total dedication time in seconds
+            // Return total dedication time in seconds.
             $total = 0;
 
             if ($logs) {
@@ -161,7 +161,7 @@ class block_dedication_manager {
             return $total;
 
         } else {
-            // Return user sessions with details
+            // Return user sessions with details.
             $rows = array();
 
             if ($logs) {
@@ -174,7 +174,7 @@ class block_dedication_manager {
                     if (($log->time - $previouslogtime) > $this->limit) {
                         $dedication = $previouslogtime - $sessionstart;
 
-                        // Ignore sessions with a really short duration
+                        // Ignore sessions with a really short duration.
                         if ($dedication > BLOCK_DEDICATION_IGNORE_SESSION_TIME) {
                             $rows[] = (object) array('start_date' => $sessionstart, 'dedicationtime' => $dedication, 'ips' => array_keys($ips));
                             $ips = array();
@@ -187,7 +187,7 @@ class block_dedication_manager {
 
                 $dedication = $previouslogtime - $sessionstart;
 
-                // Ignore sessions with a really short duration
+                // Ignore sessions with a really short duration.
                 if ($dedication > BLOCK_DEDICATION_IGNORE_SESSION_TIME) {
                     $rows[] = (object) array('start_date' => $sessionstart, 'dedicationtime' => $dedication, 'ips' => array_keys($ips));
                 }
@@ -197,7 +197,7 @@ class block_dedication_manager {
         }
     }
 
-    // Downloads user dedication with passed data
+    // Downloads user dedication with passed data.
     public function download_user_dedication($user) {
         $headers = array(
             array(
@@ -238,49 +238,51 @@ class block_dedication_manager {
 
 }
 
-// Utils functions used by block dedication
+// Utils functions used by block dedication.
 class block_dedication_utils {
 
-    public static $LOGSTORES = array('logstore_standard', 'logstore_legacy');
+    public static $logstores = array('logstore_standard', 'logstore_legacy');
 
-    // Return formatted events from logstores
+    // Return formatted events from logstores.
     public static function get_events_select($selectwhere, array $params) {
         $return = array();
 
-        static $allreaders = NULL;
+        static $allreaders = null;
 
         if (is_null($allreaders)) {
             $allreaders = get_log_manager()->get_readers();
         }
 
-        $processed_readers = 0;
+        $processedreaders = 0;
 
-        foreach (self::$LOGSTORES as $name) {
+        foreach (self::$logstores as $name) {
             if (isset($allreaders[$name])) {
                 $reader = $allreaders[$name];
                 $events = $reader->get_events_select($selectwhere, $params, 'timecreated ASC', 0, 0);
                 foreach ($events as $event) {
-                    // Note: see \core\event\base to view base class of event
+                    // Note: see \core\event\base to view base class of event.
                     $obj = new stdClass();
                     $obj->time = $event->timecreated;
                     $obj->ip = $event->get_logextra()['ip'];
                     $return[] = $obj;
                 }
                 if (!empty($events)) {
-                    $processed_readers++;
+                    $processedreaders++;
                 }
             }
         }
 
-        // Sort mixed array by time ascending again only when more of a reader has added events to return array
-        if ($processed_readers > 1) {
-            usort($return, function($a, $b) { return $a->time > $b->time; });
+        // Sort mixed array by time ascending again only when more of a reader has added events to return array.
+        if ($processedreaders > 1) {
+            usort($return, function($a, $b) {
+                return $a->time > $b->time;
+            });
         }
 
         return $return;
     }
 
-    // Formats time based in Moodle function format_time($totalsecs)
+    // Formats time based in Moodle function format_time($totalsecs).
     public static function format_dedication($totalsecs) {
         $totalsecs = abs($totalsecs);
 
@@ -305,37 +307,43 @@ class block_dedication_utils {
         $omins = '';
         $osecs = '';
 
-        if ($hours)
+        if ($hours) {
             $ohours = $hours . ' ' . $sh;
-        if ($mins)
+        }
+        if ($mins) {
             $omins = $mins . ' ' . $sm;
-        if ($secs)
+        }
+        if ($secs) {
             $osecs = $secs . ' ' . $ss;
+        }
 
-        if ($hours)
+        if ($hours) {
             return trim($ohours . ' ' . $omins);
-        if ($mins)
+        }
+        if ($mins) {
             return trim($omins . ' ' . $osecs);
-        if ($secs)
+        }
+        if ($secs) {
             return $osecs;
+        }
         return get_string('none');
     }
 
-    // Formats ips
+    // Formats ips.
     public static function format_ips($ips) {
         return implode(', ', array_map('block_dedication_utils::link_ip', $ips));
     }
 
-    // Generates an linkable ip
+    // Generates an linkable ip.
     public static function link_ip($ip) {
         return html_writer::link("http://en.utrace.de/?query=$ip", $ip, array('target' => '_blank'));
     }
 
-    // Table styles
+    // Table styles.
     public static function get_table_styles() {
         global $PAGE;
 
-        // Twitter Bootstrap styling
+        // Twitter Bootstrap styling.
         if (in_array('bootstrapbase', $PAGE->theme->parents)) {
             $styles = array(
                 'table_class' => 'table table-striped table-bordered table-hover table-condensed table-dedication',
@@ -351,22 +359,22 @@ class block_dedication_utils {
         return $styles;
     }
 
-    // Generates generic Excel file for download
-    public static function generate_download($download_name, $rows) {
+    // Generates generic Excel file for download.
+    public static function generate_download($downloadname, $rows) {
         global $CFG;
 
         require_once($CFG->libdir . '/excellib.class.php');
 
-        $workbook = new MoodleExcelWorkbook(clean_filename($download_name));        
+        $workbook = new MoodleExcelWorkbook(clean_filename($downloadname));
 
         $myxls = $workbook->add_worksheet(get_string('pluginname', 'block_dedication'));
 
-        $row_count = 0;
+        $rowcount = 0;
         foreach ($rows as $row) {
             foreach ($row as $index => $content) {
-                $myxls->write($row_count, $index, $content);
+                $myxls->write($rowcount, $index, $content);
             }
-            $row_count++;
+            $rowcount++;
         }
 
         $workbook->close();
