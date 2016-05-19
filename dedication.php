@@ -85,7 +85,7 @@ $pageurl->params(array(
 $view = new stdClass();
 $view->header = array();
 
-$tablestyles = block_dedication_utils::get_tablestyles();
+$tablestyles = block_dedication_utils::get_table_styles();
 $view->table = new html_table();
 $view->table->attributes = array('class' => $tablestyles['table_class'] . " table-$action");
 
