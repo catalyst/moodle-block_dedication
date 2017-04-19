@@ -148,6 +148,10 @@ switch ($action) {
                     $members = groups_get_members($group->id);
                     $students = array_merge($students, $members);
                 }
+                // Empty groups or missconfigured, get all students anyway
+                if (!$students) {
+                    $students = get_enrolled_users(context_course::instance($course->id));
+                }
             }
         }
 
