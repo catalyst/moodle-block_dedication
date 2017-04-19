@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Dedication block definition
+ * Dedication block definition.
  *
  * @package    block
  * @subpackage dedication
@@ -27,22 +27,22 @@
 
 class block_dedication extends block_base {
 
-    function init() {
+    public function init() {
         $this->title = get_string('pluginname', 'block_dedication');
     }
 
-    function specialization() {
-        // Previous block versions didn't have config settings
+    public function specialization() {
+        // Previous block versions didn't have config settings.
         if ($this->config === null) {
             $this->config = new stdClass();
         }
-        // Set always show_dedication config settings to avoid errors
+        // Set always show_dedication config settings to avoid errors.
         if (!isset($this->config->show_dedication)) {
             $this->config->show_dedication = 0;
         }
     }
 
-    function get_content() {
+    public function get_content() {
         global $OUTPUT, $USER;
 
         if ($this->content !== null) {
@@ -59,13 +59,13 @@ class block_dedication extends block_base {
         $this->content->footer = '';
 
         if ($this->config->show_dedication == 1) {
-            require_once 'dedication_lib.php';
+            require_once('dedication_lib.php');
             $mintime = $this->page->course->startdate;
             $maxtime = time();
             $dm = new block_dedication_manager($this->page->course, $mintime, $maxtime, $this->config->limit);
-            $dedication_time = $dm->get_user_dedication($USER, true);
+            $dedicationtime = $dm->get_user_dedication($USER, true);
             $this->content->text .= html_writer::tag('p', get_string('dedication_estimation', 'block_dedication'));
-            $this->content->text .= html_writer::tag('p', block_dedication_utils::format_dedication($dedication_time));
+            $this->content->text .= html_writer::tag('p', block_dedication_utils::format_dedication($dedicationtime));
         }
 
         if (has_capability('block/dedication:use', context_block::instance($this->instance->id))) {
@@ -81,7 +81,7 @@ class block_dedication extends block_base {
         return $this->content;
     }
 
-    function applicable_formats() {
+    public function applicable_formats() {
         return array('course' => true);
     }
 
