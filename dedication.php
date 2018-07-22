@@ -146,7 +146,7 @@ switch ($action) {
                 $students = array();
                 foreach ($groups as $group) {
                     $members = groups_get_members($group->id);
-                    $students = array_merge($students, $members);
+                    $students = array_replace($students, $members);
                 }
                 // Empty groups or missconfigured, get all students anyway
                 if (!$students) {
