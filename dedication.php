@@ -120,7 +120,7 @@ switch ($action) {
         $view->header[] = get_string('period', 'block_dedication', (object) array('mintime' => userdate($mintime), 'maxtime' => userdate($maxtime)));
         $view->header[] = get_string('perioddiff', 'block_dedication', format_time($maxtime - $mintime));
         $view->header[] = get_string('totaldedication', 'block_dedication', block_dedication_utils::format_dedication($totaldedication));
-        $view->header[] = get_string('meandedication', 'block_dedication', block_dedication_utils::format_dedication($totaldedication / count($rows)));
+        $view->header[] = get_string('meandedication', 'block_dedication', block_dedication_utils::format_dedication(count($rows) ? $totaldedication / count($rows) : 0));
 
         $view->table->head = array(get_string('sessionstart', 'block_dedication'), get_string('sessionduration', 'block_dedication'), 'IP');
         $view->table->data = $rows;
@@ -189,7 +189,7 @@ switch ($action) {
         $view->header[] = get_string('period', 'block_dedication', (object) array('mintime' => userdate($mintime), 'maxtime' => userdate($maxtime)));
         $view->header[] = get_string('perioddiff', 'block_dedication', format_time($maxtime - $mintime));
         $view->header[] = get_string('totaldedication', 'block_dedication', block_dedication_utils::format_dedication($totaldedication));
-        $view->header[] = get_string('meandedication', 'block_dedication', block_dedication_utils::format_dedication($totaldedication / count($rows)));
+        $view->header[] = get_string('meandedication', 'block_dedication', block_dedication_utils::format_dedication(count($rows) ? $totaldedication / count($rows) : 0));
 
         $view->table->head = array('', get_string('firstname'), get_string('lastname'), get_string('group'),
             get_string('dedicationrow', 'block_dedication'), get_string('connectionratiorow', 'block_dedication'));
