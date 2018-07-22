@@ -297,7 +297,7 @@ class block_dedication_utils {
         $hours = floor($totalsecs / HOURSECS);
         $remainder = $totalsecs - ($hours * HOURSECS);
         $mins = floor($remainder / MINSECS);
-        $secs = $remainder - ($mins * MINSECS);
+        $secs = round($remainder - ($mins * MINSECS), 2);
 
         $ss = ($secs == 1) ? $str->sec : $str->secs;
         $sm = ($mins == 1) ? $str->min : $str->mins;
