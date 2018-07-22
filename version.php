@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-$plugin->version   = 2017042300;
-$plugin->requires  = 2014051200;
+$plugin->version   = 2018072200;
+$plugin->requires  = 2015111600;
 $plugin->component = 'block_dedication';
-$plugin->maturity = MATURITY_STABLE;
-$plugin->release   = 'Moodle 2.7+ /·3.x+ - New logging system';
+$plugin->maturity  = MATURITY_STABLE;
+$plugin->release   = 'Moodle 3.x+';
