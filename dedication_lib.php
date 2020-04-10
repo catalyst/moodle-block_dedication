@@ -373,9 +373,10 @@ class block_dedication_utils {
         global $PAGE;
 
         // Twitter Bootstrap styling.
-        if (in_array('bootstrapbase', $PAGE->theme->parents)) {
+        $is_bootstrap_theme = ($PAGE->theme->name === 'boost') || count(array_intersect(array('boost', 'bootstrapbase'), $PAGE->theme->parents)) > 0;
+        if ($is_bootstrap_theme) {
             $styles = array(
-                'table_class' => 'table table-striped table-bordered table-hover table-condensed table-dedication',
+                'table_class' => 'table table-bordered table-hover table-sm table-condensed table-dedication',
                 'header_style' => 'background-color: #333; color: #fff;'
             );
         } else {
