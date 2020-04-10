@@ -1,0 +1,8 @@
+{
+    "name": "cicei/moodle-block-dedication",
+    "description": "Course dedication block for Moodle.",
+    "type": "library",
+    "license": "GPL 3",
+    "require": {},
+    "require-dev": {}
+}
