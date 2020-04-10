@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+defined('MOODLE_INTERNAL') || die();
+
 // Default session time limit in seconds.
 define('BLOCK_DEDICATION_DEFAULT_SESSION_LIMIT', 60 * 60);
 // Ignore sessions with a duration less than defined value in seconds.
@@ -21,7 +23,9 @@ define('BLOCK_DEDICATION_IGNORE_SESSION_TIME', 59);
 // Default regeneration time in seconds.
 define('BLOCK_DEDICATION_DEFAULT_REGEN_TIME', 60 * 15);
 
-// Generate dedication reports based in passed params.
+/**
+ * Generate dedication reports based in passed params.
+ */
 class block_dedication_manager {
 
     protected $course;
@@ -197,7 +201,11 @@ class block_dedication_manager {
         }
     }
 
-    // Downloads user dedication with passed data.
+    /**
+     * Downloads user dedication with passed data.
+     * @param $user
+     * @return MoodleExcelWorkbook
+     */
     public function download_user_dedication($user) {
         $headers = array(
             array(
@@ -238,12 +246,19 @@ class block_dedication_manager {
 
 }
 
-// Utils functions used by block dedication.
+/**
+ * Utils functions used by block dedication.
+ */
 class block_dedication_utils {
 
     public static $logstores = array('logstore_standard', 'logstore_legacy');
 
-    // Return formatted events from logstores.
+    /**
+     * Return formatted events from logstores.
+     * @param string $selectwhere
+     * @param array $params
+     * @return array
+     */
     public static function get_events_select($selectwhere, array $params) {
         $return = array();
 
@@ -282,7 +297,11 @@ class block_dedication_utils {
         return $return;
     }
 
-    // Formats time based in Moodle function format_time($totalsecs).
+    /**
+     * Formats time based in Moodle function format_time($totalsecs).
+     * @param int $totalsecs
+     * @return string
+     */
     public static function format_dedication($totalsecs) {
         $totalsecs = abs($totalsecs);
 
@@ -329,17 +348,27 @@ class block_dedication_utils {
         return get_string('none');
     }
 
-    // Formats ips.
+    /**
+     * @param string[] $ips
+     * @return string
+     */
     public static function format_ips($ips) {
         return implode(', ', array_map('block_dedication_utils::link_ip', $ips));
     }
 
-    // Generates an linkable ip.
+    /**
+     * Generates a linkable ip.
+     * @param string $ip
+     * @return string
+     */
     public static function link_ip($ip) {
         return html_writer::link("http://en.utrace.de/?query=$ip", $ip, array('target' => '_blank'));
     }
 
-    // Table styles.
+    /**
+     * Return table styles based on current theme.
+     * @return array
+     */
     public static function get_table_styles() {
         global $PAGE;
 
@@ -359,7 +388,13 @@ class block_dedication_utils {
         return $styles;
     }
 
-    // Generates generic Excel file for download.
+    /**
+     * Generates generic Excel file for download.
+     * @param string $downloadname
+     * @param array $rows
+     * @return MoodleExcelWorkbook
+     * @throws coding_exception
+     */
     public static function generate_download($downloadname, $rows) {
         global $CFG;
 
@@ -381,5 +416,4 @@ class block_dedication_utils {
 
         return $workbook;
     }
-
 }

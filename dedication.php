@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-global $DB, $PAGE, $OUTPUT;
-
 require_once("../../config.php");
+
+global $DB, $PAGE, $OUTPUT;
 
 // Input params.
 $courseid = required_param('courseid', PARAM_INT);
@@ -148,7 +148,7 @@ switch ($action) {
                     $members = groups_get_members($group->id);
                     $students = array_replace($students, $members);
                 }
-                // Empty groups or missconfigured, get all students anyway
+                // Empty groups or missconfigured, get all students anyway.
                 if (!$students) {
                     $students = get_enrolled_users(context_course::instance($course->id));
                 }
