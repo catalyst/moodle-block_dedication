@@ -16,7 +16,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2018072200;
+$plugin->version   = 2020041000;
 $plugin->requires  = 2015111600;
 $plugin->component = 'block_dedication';
 $plugin->maturity  = MATURITY_STABLE;
