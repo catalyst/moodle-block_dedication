@@ -37,8 +37,11 @@ class dedication_block_selection_form extends moodleform {
         $mform->addElement('date_time_selector', 'maxtime', get_string('maxtime', 'block_dedication'));
         $mform->addHelpButton('maxtime', 'maxtime', 'block_dedication');
 
+// Modifiche Ciro
+        $mform->addElement('advcheckbox', 'endtime', get_string('endtime', 'block_dedication'));
+
         $limitoptions = array();
-        for ($i = 1; $i <= 150; $i++) {
+        for ($i = 1; $i <= 300; $i++) {
             $limitoptions[$i * 60] = $i;
         }
         $mform->addElement('select', 'limit', get_string('limit', 'block_dedication'), $limitoptions);

@@ -66,12 +66,14 @@ if ($mform->is_submitted()) {
     $mintime = $formdata->mintime;
     $maxtime = $formdata->maxtime;
     $limit = $formdata->limit;
+    $endtime = $formdata->endtime;   // Modifica Ciro
 } else {
     // Params from request or default values.
     $mintime = optional_param('mintime', $course->startdate, PARAM_INT);
     $maxtime = optional_param('maxtime', time(), PARAM_INT);
     $limit = optional_param('limit', BLOCK_DEDICATION_DEFAULT_SESSION_LIMIT, PARAM_INT);
-    $mform->set_data(array('mintime' => $mintime, 'maxtime' => $maxtime, 'limit' => $limit));
+    $endtime = true;  // Modifica Ciro
+    $mform->set_data(array('mintime' => $mintime, 'maxtime' => $maxtime, 'limit' => $limit, 'endtime' => $endtime));  // Modifica Ciro
 }
 
 // Url with params for links inside tables.
@@ -79,6 +81,7 @@ $pageurl->params(array(
     'mintime' => $mintime,
     'maxtime' => $maxtime,
     'limit' => $limit,
+    'endtime' => $endtime,   // Modifica Ciro
 ));
 
 // Object to store view data.
@@ -109,11 +112,21 @@ switch ($action) {
         $rows = $dm->get_user_dedication($user);
         foreach ($rows as $index => $row) {
             $totaldedication += $row->dedicationtime;
-            $rows[$index] = array(
-                userdate($row->start_date),
-                block_dedication_utils::format_dedication($row->dedicationtime),
-                block_dedication_utils::format_ips($row->ips),
-            );
+
+            if($endtime)		// Modifica Ciro - se selezionato Visualizza Fine Sessione
+               $rows[$index] = array(
+                   userdate($row->start_date),
+                   userdate($row->end_date),		// Modifica Ciro
+                   block_dedication_utils::format_dedication($row->dedicationtime),
+                   block_dedication_utils::format_ips($row->ips),
+               );
+
+            else
+               $rows[$index] = array(
+                   userdate($row->start_date),
+                   block_dedication_utils::format_dedication($row->dedicationtime),
+                   block_dedication_utils::format_ips($row->ips),
+               );
         }
 
         $view->header[] = get_string('userdedication', 'block_dedication', $OUTPUT->user_picture($user, array('courseid' => $course->id)) . fullname($user));
@@ -122,7 +135,11 @@ switch ($action) {
         $view->header[] = get_string('totaldedication', 'block_dedication', block_dedication_utils::format_dedication($totaldedication));
         $view->header[] = get_string('meandedication', 'block_dedication', block_dedication_utils::format_dedication(count($rows) ? $totaldedication / count($rows) : 0));
 
-        $view->table->head = array(get_string('sessionstart', 'block_dedication'), get_string('sessionduration', 'block_dedication'), 'IP');
+        if($endtime)    // Modifica Ciro - se selezionato Visualizza Fine Sessione
+           $view->table->head = array(get_string('sessionstart', 'block_dedication'), get_string('sessionend', 'block_dedication'), get_string('sessionduration', 'block_dedication'), 'IP');
+        else
+           $view->table->head = array(get_string('sessionstart', 'block_dedication'), get_string('sessionduration', 'block_dedication'), 'IP');
+
         $view->table->data = $rows;
         break;
 

@@ -172,15 +172,17 @@ class block_dedication_manager {
                 $previouslog = array_shift($logs);
                 $previouslogtime = $previouslog->time;
                 $sessionstart = $previouslogtime;
+                $sessionend = $sessionstart;		// Modifica Ciro
                 $ips = array($previouslog->ip => true);
 
                 foreach ($logs as $log) {
                     if (($log->time - $previouslogtime) > $this->limit) {
                         $dedication = $previouslogtime - $sessionstart;
+                        $sessionend = $previouslogtime;	// Modifica Ciro
 
                         // Ignore sessions with a really short duration.
                         if ($dedication > BLOCK_DEDICATION_IGNORE_SESSION_TIME) {
-                            $rows[] = (object) array('start_date' => $sessionstart, 'dedicationtime' => $dedication, 'ips' => array_keys($ips));
+                            $rows[] = (object) array('start_date' => $sessionstart, 'end_date' => $sessionend, 'dedicationtime' => $dedication, 'ips' => array_keys($ips)); // Modifica Ciro
                             $ips = array();
                         }
                         $sessionstart = $log->time;
@@ -190,10 +192,11 @@ class block_dedication_manager {
                 }
 
                 $dedication = $previouslogtime - $sessionstart;
+                $sessionend = $previouslogtime;	// Modifica Ciro
 
                 // Ignore sessions with a really short duration.
                 if ($dedication > BLOCK_DEDICATION_IGNORE_SESSION_TIME) {
-                    $rows[] = (object) array('start_date' => $sessionstart, 'dedicationtime' => $dedication, 'ips' => array_keys($ips));
+                    $rows[] = (object) array('start_date' => $sessionstart, 'end_date' => $sessionend, 'dedicationtime' => $dedication, 'ips' => array_keys($ips)); // Modifica Ciro
                 }
             }
 
@@ -221,6 +224,7 @@ class block_dedication_manager {
                 get_string('firstname'),
                 get_string('lastname'),
                 get_string('sessionstart', 'block_dedication'),
+                get_string('sessionend', 'block_dedication'),   // Modifica Ciro
                 get_string('dedicationrow', 'block_dedication') . ' ' . get_string('secs'),
                 get_string('sessionduration', 'block_dedication'),
                 'IP',
@@ -228,11 +232,13 @@ class block_dedication_manager {
         );
 
         $rows = $this->get_user_dedication($user);
+
         foreach ($rows as $index => $row) {
             $rows[$index] = array(
                 $user->firstname,
                 $user->lastname,
                 userdate($row->start_date),
+                userdate($row->end_date),   // Modifica Ciro
                 $row->dedicationtime,
                 block_dedication_utils::format_dedication($row->dedicationtime),
                 implode(', ', $row->ips),

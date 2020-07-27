@@ -74,3 +74,7 @@ $string['dedicationgroup'] = 'All group <em>{$a}</em> members dedication. Choose
 $string['userdedication'] = 'Detailed course dedication of <em>{$a}</em>.';
 $string['sessionstart'] = 'Session start';
 $string['sessionduration'] = 'Duration';
+
+// Modifiche Ciro
+$string['endtime'] = 'Show session end';
+$string['sessionend'] = 'Session end';
