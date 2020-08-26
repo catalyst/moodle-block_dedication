@@ -4,5 +4,11 @@
     "type": "library",
     "license": "GPL 3",
     "require": {},
-    "require-dev": {}
+    "require-dev": {},
+    "scripts": {
+        "build": [
+            "dos2unix ./bin/build.sh",
+            "/bin/bash ./bin/build.sh"
+        ]
+    }
 }
