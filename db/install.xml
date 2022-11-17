@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="blocks/dedication/db" VERSION="20221100" COMMENT="XMLDB file for Moodle blocks/dedication"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="block_dedication" COMMENT="Contains the student dedication informaiton">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="User id of the user dedication"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Course id for the user dedication"/>
+        <FIELD NAME="timespent" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Time spent on the course"/>
+        <FIELD NAME="timecollected" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The time the data collected"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="fk_component" TYPE="foreign" FIELDS="userid, courseid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="block_dedication" UNIQUE="false" FIELDS="id, userid, courseid, timecollected"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

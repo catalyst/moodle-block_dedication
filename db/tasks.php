@@ -14,26 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die();
+/**
+ *
+ * @package block_dedication
+ * @copyright 2022 University of Canterbury
+ * @author Pramith Dayananda <pramithd@catalyst.net.nz>
+ */
 
-$capabilities = array(
-    'block/dedication:use' => array(
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_BLOCK,
-        'archetypes' => array(
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        )
-    ),
-    'block/dedication:addinstance' => array(
-        'riskbitmask' => RISK_SPAM | RISK_XSS,
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_BLOCK,
-        'archetypes' => array(
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        ),
-        'clonepermissionsfrom' => 'moodle/site:manageblocks'
-    ),
-);
+defined('MOODLE_INTERNAL') || die;
+
+ $tasks = [
+    [
+        'classname' => 'block_dedication\task\dedication_collector',
+        'blocking' => 0,
+        'minute' => '10',
+        'hour' => '01',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*',
+        'disabled' => false
+    ],
+];

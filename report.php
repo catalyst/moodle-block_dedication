@@ -14,52 +14,58 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once("../../config.php");
+/**
+ *
+ * @package block_dedication
+ * @copyright 2022 University of Canterbury
+ * @author Pramith Dayananda <pramithd@catalyst.net.nz>
+ */
 
-global $DB, $PAGE, $OUTPUT;
+use block_dedication\form\admin_filter;
+use block_dedication\lib\manager;
+use block_dedication\lib\util;
 
-// Input params.
-$courseid = required_param('courseid', PARAM_INT);
-$instanceid = required_param('instanceid', PARAM_INT);
+require('../../config.php');
+require_once($CFG->libdir.'/adminlib.php');
 
-// Require course login.
-$course = $DB->get_record("course", array("id" => $courseid), '*', MUST_EXIST);
-require_course_login($course);
+global $CFG, $PAGE;
 
-// Require capability to use this plugin in block context.
-$context = context_block::instance($instanceid);
-require_capability('block/dedication:use', $context);
+//require_login();
+admin_externalpage_setup('block_dedication_report', '', null, '', array('pagelayout' => 'report'));
 
-require_once('dedication_lib.php');
+if (!$context = context_system::instance()) {
+    throw new moodle_exception('wrongcontext', 'error');
+}
 
-// Optional params from request or default values.
+$courseid = optional_param('courseid', 0, PARAM_ALPHANUM);
 $action = optional_param('action', 'all', PARAM_ALPHANUM);
 $id = optional_param('id', 0, PARAM_INT);
 $download = optional_param('download', false, PARAM_BOOL);
 
 // Current url.
-$pageurl = new moodle_url('/blocks/dedication/dedication.php');
+$pageurl = new moodle_url('/blocks/dedication/report.php');
 $pageurl->params(array(
     'courseid' => $courseid,
-    'instanceid' => $instanceid,
+    'instanceid' => 11,
     'action' => $action,
     'id' => $id,
 ));
+
+$config = get_config('block_dedication');
+$course = $DB->get_record('course', array('id' => 2), '*', MUST_EXIST);
 
 // Page format.
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('report');
 $PAGE->set_pagetype('course-view-' . $course->format);
-$PAGE->navbar->add(get_string('pluginname', 'block_dedication'), new moodle_url('/blocks/dedication/dedication.php', array('courseid' => $courseid, 'instanceid' => $instanceid)));
+//$PAGE->navbar->add(get_string('pluginname', 'block_dedication'), new moodle_url('/admin/blocks/index.php', array('courseid' => $courseid, 'instanceid' => $instanceid)));
 $PAGE->set_url($pageurl);
-$PAGE->set_title(get_string('pagetitle', 'block_dedication', $course->shortname));
+$PAGE->set_title(get_string('reporttitle', 'block_dedication', $course->shortname));
 $PAGE->set_heading($course->fullname);
 
-// Load libraries.
-require_once('dedication_form.php');
-
 // Load calculate params from form, request or set default values.
-$mform = new dedication_block_selection_form($pageurl, null, 'get');
+
+$mform = new admin_filter();
 if ($mform->is_submitted()) {
     // Params from form post.
     $formdata = $mform->get_data();
@@ -70,7 +76,7 @@ if ($mform->is_submitted()) {
     // Params from request or default values.
     $mintime = optional_param('mintime', $course->startdate, PARAM_INT);
     $maxtime = optional_param('maxtime', time(), PARAM_INT);
-    $limit = optional_param('limit', BLOCK_DEDICATION_DEFAULT_SESSION_LIMIT, PARAM_INT);
+    $limit = optional_param('limit', $config->default_session_limit, PARAM_INT);
     $mform->set_data(array('mintime' => $mintime, 'maxtime' => $maxtime, 'limit' => $limit));
 }
 
@@ -85,7 +91,7 @@ $pageurl->params(array(
 $view = new stdClass();
 $view->header = array();
 
-$tablestyles = block_dedication_utils::get_table_styles();
+$tablestyles = \block_dedication\lib\utils::get_table_styles();
 $view->table = new html_table();
 $view->table->attributes = array('class' => $tablestyles['table_class'] . " table-$action");
 
@@ -98,7 +104,7 @@ switch ($action) {
             print_error('usernotincourse');
         }
 
-        $dm = new block_dedication_manager($course, $mintime, $maxtime, $limit);
+        $dm = new \block_dedication\lib\manager($course, $mintime, $maxtime, $limit);
         if ($download) {
             $dm->download_user_dedication($user);
             exit;
@@ -111,8 +117,8 @@ switch ($action) {
             $totaldedication += $row->dedicationtime;
             $rows[$index] = array(
                 userdate($row->start_date),
-                block_dedication_utils::format_dedication($row->dedicationtime),
-                block_dedication_utils::format_ips($row->ips),
+                \block_dedication\lib\utils::format_dedication($row->dedicationtime),
+                \block_dedication\lib\utils::format_ips($row->ips),
             );
         }
 
@@ -129,6 +135,7 @@ switch ($action) {
     case 'group':
     case 'all':
     default:
+        $students = array();
         $groups = groups_get_all_groups($course->id);
 
         if ($action == 'group') {
@@ -141,7 +148,7 @@ switch ($action) {
         } else {
             // Get all students in this course or ordered by group.
             if ($course->groupmode == NOGROUPS) {
-                $students = get_enrolled_users(context_course::instance($course->id));
+                //$students = get_enrolled_users(context_course::instance($course->id));
             } else {
                 $students = array();
                 foreach ($groups as $group) {
@@ -156,9 +163,9 @@ switch ($action) {
         }
 
         if (!$students) {
-            print_error('noparticipants');
+            //print_error('noparticipants');
         }
-        $dm = new block_dedication_manager($course, $mintime, $maxtime, $limit);
+        $dm = new \block_dedication\lib\manager($course, $mintime, $maxtime, $limit);
         $rows = $dm->get_students_dedication($students);
         if ($download) {
             $dm->download_students_dedication($rows);
@@ -176,7 +183,7 @@ switch ($action) {
                 html_writer::link($userurl, $row->user->firstname),
                 html_writer::link($userurl, $row->user->lastname),
                 html_writer::link($groupurl, isset($groups[$row->groupid]) ? $groups[$row->groupid]->name : ''),
-                block_dedication_utils::format_dedication($row->dedicationtime),
+                \block_dedication\lib\utils::format_dedication($row->dedicationtime),
                 $row->connectionratio
             );
         }
@@ -188,8 +195,8 @@ switch ($action) {
         }
         $view->header[] = get_string('period', 'block_dedication', (object) array('mintime' => userdate($mintime), 'maxtime' => userdate($maxtime)));
         $view->header[] = get_string('perioddiff', 'block_dedication', format_time($maxtime - $mintime));
-        $view->header[] = get_string('totaldedication', 'block_dedication', block_dedication_utils::format_dedication($totaldedication));
-        $view->header[] = get_string('meandedication', 'block_dedication', block_dedication_utils::format_dedication(count($rows) ? $totaldedication / count($rows) : 0));
+        $view->header[] = get_string('totaldedication', 'block_dedication', \block_dedication\lib\utils::format_dedication($totaldedication));
+        $view->header[] = get_string('meandedication', 'block_dedication', \block_dedication\lib\utils::format_dedication(count($rows) ? $totaldedication / count($rows) : 0));
 
         $view->table->head = array('', get_string('firstname'), get_string('lastname'), get_string('group'),
             get_string('dedicationrow', 'block_dedication'), get_string('connectionratiorow', 'block_dedication'));

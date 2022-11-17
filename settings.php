@@ -1,0 +1,43 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ *
+ * @package block_dedication
+ * @copyright 2022 University of Canterbury
+ * @author Pramith Dayananda <pramithd@catalyst.net.nz>
+ */
+
+
+defined('MOODLE_INTERNAL') || die();
+
+if ($ADMIN->fulltree) {
+    $settings->add(new admin_setting_configtext('block_dedication/ignore_sessions_limit',
+        new lang_string('ignore_sessions_limit', 'block_dedication'),
+        new lang_string('ignore_sessions_limit_desc', 'block_dedication') ,
+        5, PARAM_INT)
+    );
+
+    $settings->add(new admin_setting_configtext('block_dedication/default_session_limit',
+        new lang_string('default_session_limit', 'block_dedication'),
+        new lang_string('default_session_limit_desc', 'block_dedication'),
+        60, PARAM_INT)
+    );
+}
+$ADMIN->add('reports', new admin_externalpage('block_dedication_report',
+    get_string('reporttitle', 'block_dedication'),
+    new moodle_url('/blocks/dedication/report.php')));
+

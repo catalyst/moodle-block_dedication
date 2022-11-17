@@ -64,18 +64,18 @@ class block_dedication extends block_base {
             require_once('dedication_lib.php');
             $mintime = $this->page->course->startdate;
             $maxtime = time();
-            $dm = new block_dedication_manager($this->page->course, $mintime, $maxtime, $this->config->limit);
+            $dm = new block_dedication\lib\manager($this->page->course, $mintime, $maxtime, $this->config->limit);
             $dedicationtime = $dm->get_user_dedication($USER, true);
             $this->content->text .= html_writer::tag('p', get_string('dedication_estimation', 'block_dedication'));
-            $this->content->text .= html_writer::tag('p', block_dedication_utils::format_dedication($dedicationtime));
+            $this->content->text .= html_writer::tag('p', block_dedication\lib\utils::format_dedication($dedicationtime));
         }
 
         if (has_capability('block/dedication:use', context_block::instance($this->instance->id))) {
             $this->content->footer .= html_writer::tag('hr', null);
             $this->content->footer .= html_writer::tag('p', get_string('access_info', 'block_dedication'));
-            $url = new moodle_url('/blocks/dedication/dedication.php', array(
+            $url = new moodle_url('/blocks/dedication/report.php', array(
                 'courseid' => $this->page->course->id,
-                'instanceid' => $this->instance->id,
+                'id' => $this->instance->id,
             ));
             $this->content->footer .= $OUTPUT->single_button($url, get_string('access_button', 'block_dedication'), 'get');
         }
@@ -86,5 +86,15 @@ class block_dedication extends block_base {
     public function applicable_formats() {
         return array('course' => true);
     }
+
+    /**
+     * Controls global configurability of block.
+     *
+     * @return bool
+     */
+    public function has_config(): bool {
+        return true;
+    }
+
 
 }
