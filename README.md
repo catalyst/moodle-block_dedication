@@ -1,11 +1,18 @@
-Introduction
-------------
+# Introduction
 
 This block allows to see the dedication estimated time to a Moodle course by the participants of the course.
+https://moodle.org/plugins/block_dedication
 
-How dedication time is estimated?
----------------------------------
+# MOODLE 4.X updates
+Maintenance for this plugin has been taken over by Catalyst IT thanks to funding from the University of Canterbury.
 
+Please note - this is Work in Progress code under development - use at your own risk, see some of the open issues in the tracker for known issues.
+
+NOTE: This new version of the block differs from the original version in some significant ways:
+1) To unify global reporting across all courses, many settings previously set within the block are now "site-level" settings, instead of being able to customise at the course level within the block settings.
+2) Timespent information is now generated via a scheduled task - this improves general performance but also enables the data to be exposed within Moodle's new Report Builder custom reporting.
+
+# How dedication time is estimated?
 Time is estimated based in the concepts of Session and Session duration applied
 to Moodle's log entries:
 
@@ -19,8 +26,7 @@ to Moodle's log entries:
   Session duration:
   elapsed time between the first and the last click of the session.
 
-Features
---------
+# Features
 
 This block is intended to be used only by teachers, so students aren't going to
 see it and their dedication time. However, block can be configured to show
@@ -46,19 +52,13 @@ This block cannot be used in the site page, only in courses pages.
 
 All texts in English and Spanish.
 
-Support
--------
-Support is offered in English and Spanish in these forum discussions:
+# Support
+Please use the moodle coummunity forums for help with this plugin:
+https://moodle.org/mod/forum/view.php?id=44
 
-  English discussion: http://moodle.org/mod/forum/discuss.php?d=10948
-  Spanish discussion: http://moodle.org/mod/forum/discuss.php?d=109489
+Alternatively commercial-level support is available from Catalyst IT:
+https://www.catalyst.net.nz/
 
-Code repository: https://bitbucket.org/ciceidev/moodle_block_dedication
-Issues: https://bitbucket.org/ciceidev/moodle_block_dedication/issues
+# Credits
 
-Credits
--------
-
-This block was developed by CICEI at Las Palmas de Gran Canaria University.
-First version for Moodle 1.9 by Borja Rubio Reyes. Updated and improved version
-for Moodle 2 by Aday Talavera Hierro.
+This block was previously developed and produced by Aday Talavera, CICEI at Las Palmas de Gran Canaria University and the first version for Moodle 1.9 was developed by Borja Rubio Reyes.
