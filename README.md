@@ -6,7 +6,7 @@ https://moodle.org/plugins/block_dedication
 # MOODLE 4.X updates
 Maintenance for this plugin has been taken over by Catalyst IT thanks to funding from the University of Canterbury.
 
-Please note - this is Work in Progress code under development - use at your own risk, see some of the open issues in the tracker for known issues.
+## This is Work in Progress code under development - use at your own risk, see some of the open issues in the tracker for known issues.
 
 NOTE: This new version of the block differs from the original version in some significant ways:
 1) To unify global reporting across all courses, many settings previously set within the block are now "site-level" settings, instead of being able to customise at the course level within the block settings.
