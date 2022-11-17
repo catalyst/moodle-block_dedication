@@ -12,6 +12,13 @@ NOTE: This new version of the block differs from the original version in some si
 1) To unify global reporting across all courses, many settings previously set within the block are now "site-level" settings, instead of being able to customise at the course level within the block settings.
 2) Timespent information is now generated via a scheduled task - this improves general performance but also enables the data to be exposed within Moodle's new Report Builder custom reporting.
 
+# Branches
+
+| Moodle version    | Branch             | Status |
+| ----------------- | ------------------ | ------------------ |
+| Moodle 4.0+       | `MOODLE_400_STABLE` | Work in progress |
+| Moodle 3.0 - 3.11 | `MOODLE_30_STABLE` | Old unsupported branch - pull requests welcome |
+
 # How dedication time is estimated?
 Time is estimated based in the concepts of Session and Session duration applied
 to Moodle's log entries:
