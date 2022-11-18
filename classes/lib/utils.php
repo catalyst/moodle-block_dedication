@@ -193,4 +193,69 @@ class utils {
 
         return $workbook;
     }
+
+    /** Generate stats and store in caching table
+     *
+     */
+    public static function generate_stats($timestart, $timeend) {
+        if ($timeend - $timestart > WEEKSECS) {
+            // Break it down into bite sized weeks.
+            while ($timeend - $timestart > WEEKSECS) {
+                $timechunkend = $timestart + WEEKSECS;
+                self::generate_stats($timestart, $timechunkend);
+                $timestart = $timechunkend;
+            }
+        } else {
+            self::calculate($timestart, $timeend);
+        }
+
+    }
+
+    public function calculate($timestart, $timeend) {
+
+        global $DB;
+        // TODO: accessing logs data uses the log store reader classes - we should look at converting this to do something similar if possible.
+        // Get list of courses and users we want to calculate for.
+        $sql = "SELECT distinct ". $DB->sql_concat_join("':'", ['courseid', 'userid'])." as tmpid, courseid, userid
+                  FROM {logstore_standard_log}
+                 WHERE timecreated >= :timesart AND timecreated < :timeend";
+        $records = $DB->get_recordset_sql($sql, ['timestart' => $timestart, 'timeend' => $timeend]);
+        $courses = [];
+        foreach ($records as $record) {
+            if (!isset($courses[$record->courseid])) {
+                $courses[$record->courseid] = [];
+            }
+            $courses[$record->courseid][] = $record->userid;
+        }
+        $records->close();
+        foreach ($courses as $courseid => $users) {
+            $course = $DB->get_record('course', ['id' => $courseid]);
+            $logs = new manager($course, $timestart, $timeend);
+
+            $events = $logs->get_students_dedication($users);
+
+            $records = [];
+            foreach ($events as $event) {
+                $data = new \stdClass();
+                if ($event->dedicationtime == 0) {
+                    break;
+                } else {
+                    $data->userid = $event->user->id;
+                    $data->timespent = $event->dedicationtime;
+                    $data->courseid = $course->id;
+                    $data->timestart = $timestart;
+                    $data->timeend = $timeend;
+                }
+                $records[] = $data;
+            }
+        }
+        if (!empty($records)) {
+            $DB->insert_records('block_dedication', $records);
+            // Save the last time we saved some records if we haven't stored newer items yet.
+            // Basically prevents cli process for old stuff from saving data.
+            if (get_config('block_dedication', 'lastcalcualted') < $timeend) {
+                set_config('block_dedication', 'lastcalcualted', $timeend);
+            }
+        }
+    }
 }

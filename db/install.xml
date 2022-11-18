@@ -10,7 +10,8 @@
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="User id of the user dedication"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Course id for the user dedication"/>
         <FIELD NAME="timespent" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Time spent on the course"/>
-        <FIELD NAME="timecollected" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The time the data collected"/>
+        <FIELD NAME="timestart" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The start time of the data collected"/>
+        <FIELD NAME="timeend" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The end time of the data collected"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

@@ -62,7 +62,12 @@ class manager {
 
         foreach ($students as $user) {
             $daysconnected = array();
-            $params['userid'] = $user->id;
+            if (is_int($user)) { // Only userids passed in array.
+                $params['userid'] = $user;
+            } else {
+                $params['userid'] = $user->id;
+            }
+
             $logs = utils::get_events_select($where, $params);
 
             if ($logs) {

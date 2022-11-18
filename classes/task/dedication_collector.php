@@ -22,7 +22,7 @@
  */
 namespace block_dedication\task;
 
-use block_dedication\lib\manager;
+use block_dedication\lib\utils;
 
 class dedication_collector extends \core\task\scheduled_task {
 
@@ -39,66 +39,14 @@ class dedication_collector extends \core\task\scheduled_task {
      * Execute the task.
      */
     public function execute() {
-        global $DB;
-        $lastruntime = round($this->get_last_task_runtime(), 0);
-        $thisruntime = time();
-
-        // Process Start - get all active courses
-        // TODO: Filter the course list more, right now course end date used to filter the list.
-        $sql = 'SELECT
-                    c.id,
-                    c.enddate
-                FROM
-                    {course} c
-                WHERE c.id > 0 AND c.enddate >= ?
-                    order by c.id
-                ';
-        $courses = $DB->get_records_sql($sql, array($thisruntime));
-
-        // Go through all courses and find enrolled users.
-        foreach ($courses as $course) {
-            // Find min time.
-            $logs = new manager($course, $lastruntime, $thisruntime);
-
-            $students = get_enrolled_users(\context_course::instance($course->id));
-            $events = $logs->get_students_dedication($students);
-
-            $records = [];
-            foreach ($events as $event) {
-                $data = new \stdClass();
-                if ($event->dedicationtime == 0) {
-                    break;
-                } else {
-                    $data->userid = $event->user->id;
-                    $data->timespent = $event->dedicationtime;
-                    $data->courseid = $course->id;
-                    $data->timecollected = $thisruntime;
-                }
-                $records[] = $data;
-            }
-            if (!empty($records)) {
-                $DB->insert_records('block_dedication', $records);
-            }
+        $lastruntime = get_config('block_dedication', 'lastcalcualted');
+        if (empty($lastruntime)) {
+            $lastruntime = time() - WEEKSECS * 12;
+        } else if ($lastruntime > time() - (6 * HOURSECS)) {
+            mtrace("This task can only be triggered every 6 hours");
+            return;
         }
+        utils::generate_stats($lastruntime, time());
 
-    }
-
-    /*
-     return last runtime for the cron
-    */
-    public function get_last_task_runtime() {
-        global $DB;
-        $sql = "SELECT
-                    timestart
-                FROM {task_log}
-                    WHERE classname like '%dedication_collector%'  order by id desc limit 1";
-        $log = $DB->get_record_sql($sql);
-
-        if ($log->timestart) {
-            return $log->timestart;
-        }
-
-        // return the start of the day if no rog of previous run
-        return strtotime("today", time());
     }
 }
