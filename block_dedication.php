@@ -61,10 +61,9 @@ class block_dedication extends block_base {
         $this->content->footer = '';
 
         if ($this->config->show_dedication == 1) {
-            require_once('dedication_lib.php');
             $mintime = $this->page->course->startdate;
             $maxtime = time();
-            $dm = new block_dedication\lib\manager($this->page->course, $mintime, $maxtime, $this->config->limit);
+            $dm = new block_dedication\lib\manager($this->page->course, $mintime, $maxtime);
             $dedicationtime = $dm->get_user_dedication($USER, true);
             $this->content->text .= html_writer::tag('p', get_string('dedication_estimation', 'block_dedication'));
             $this->content->text .= html_writer::tag('p', block_dedication\lib\utils::format_dedication($dedicationtime));

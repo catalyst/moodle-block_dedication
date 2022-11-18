@@ -40,15 +40,12 @@ class dedication_collector extends \core\task\scheduled_task {
      */
     public function execute() {
         global $DB;
-        $table = 'block_dedication';
         $lastruntime = round($this->get_last_task_runtime(),0);
         $thisruntime = time();
-        // Default session limit covert to seconds
-        $defaultsession_limit = (get_config('block_dedication', 'default_session_limit')) * 60; 
 
         // Process Start - get all active courses
         // TODO: Filter the course list more, right now course end date used to filter the list
-        $sql = 'SELECT 
+        $sql = 'SELECT
                     c.id,
                     c.enddate
                 FROM
@@ -56,13 +53,12 @@ class dedication_collector extends \core\task\scheduled_task {
                 WHERE c.id > 0 AND c.enddate >= ?
                     order by c.id
                 ';
-        $courses = $DB->get_records_sql($sql, array($thisruntime), $limitfrom=0, $limitnum=0);
+        $courses = $DB->get_records_sql($sql, array($thisruntime));
 
-        
         // Go through all courses and find enrolled users
         foreach ($courses as $course) {
             // find min time
-            $logs = new manager($course, $lastruntime, $thisruntime, $defaultsession_limit);
+            $logs = new manager($course, $lastruntime, $thisruntime);
 
             $students = get_enrolled_users(\context_course::instance($course->id));
             $events = $logs->get_students_dedication($students);
@@ -78,7 +74,7 @@ class dedication_collector extends \core\task\scheduled_task {
                     $data->timecollected = $thisruntime;
                 }
 
-                $DB->insert_record($table, $data, $returnid=true, $bulk=false);
+                $DB->insert_record('block_dedication', $data);
             }
         }
 

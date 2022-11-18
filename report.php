@@ -71,20 +71,17 @@ if ($mform->is_submitted()) {
     $formdata = $mform->get_data();
     $mintime = $formdata->mintime;
     $maxtime = $formdata->maxtime;
-    $limit = $formdata->limit;
 } else {
     // Params from request or default values.
     $mintime = optional_param('mintime', $course->startdate, PARAM_INT);
     $maxtime = optional_param('maxtime', time(), PARAM_INT);
-    $limit = optional_param('limit', $config->default_session_limit, PARAM_INT);
-    $mform->set_data(array('mintime' => $mintime, 'maxtime' => $maxtime, 'limit' => $limit));
+    $mform->set_data(array('mintime' => $mintime, 'maxtime' => $maxtime));
 }
 
 // Url with params for links inside tables.
 $pageurl->params(array(
     'mintime' => $mintime,
-    'maxtime' => $maxtime,
-    'limit' => $limit,
+    'maxtime' => $maxtime
 ));
 
 // Object to store view data.
@@ -104,7 +101,7 @@ switch ($action) {
             print_error('usernotincourse');
         }
 
-        $dm = new \block_dedication\lib\manager($course, $mintime, $maxtime, $limit);
+        $dm = new \block_dedication\lib\manager($course, $mintime, $maxtime);
         if ($download) {
             $dm->download_user_dedication($user);
             exit;
@@ -165,7 +162,7 @@ switch ($action) {
         if (!$students) {
             //print_error('noparticipants');
         }
-        $dm = new \block_dedication\lib\manager($course, $mintime, $maxtime, $limit);
+        $dm = new \block_dedication\lib\manager($course, $mintime, $maxtime);
         $rows = $dm->get_students_dedication($students);
         if ($download) {
             $dm->download_students_dedication($rows);

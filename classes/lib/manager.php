@@ -35,11 +35,12 @@ class manager {
     protected $maxtime;
     protected $limit;
 
-    public function __construct($course, $mintime, $maxtime, $limit) {
+    public function __construct($course, $mintime, $maxtime) {
         $this->course = $course;
         $this->mintime = $mintime;
         $this->maxtime = $maxtime;
-        $this->limit = $limit;
+        $limit = get_config('block_dedication', 'session_limit');
+        $this->limit = empty($limit) ? HOURSECS : $limit;
     }
 
     public function get_students_dedication($students) {

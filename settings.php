@@ -31,10 +31,10 @@ if ($ADMIN->fulltree) {
         5, PARAM_INT)
     );
 
-    $settings->add(new admin_setting_configtext('block_dedication/default_session_limit',
-        new lang_string('default_session_limit', 'block_dedication'),
-        new lang_string('default_session_limit_desc', 'block_dedication'),
-        60, PARAM_INT)
+    $settings->add(new admin_setting_configduration('block_dedication/session_limit',
+        new lang_string('session_limit', 'block_dedication'),
+        new lang_string('session_limit_desc', 'block_dedication'),
+        HOURSECS, PARAM_INT)
     );
 }
 $ADMIN->add('reports', new admin_externalpage('block_dedication_report',
