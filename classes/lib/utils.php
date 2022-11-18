@@ -253,8 +253,8 @@ class utils {
             $DB->insert_records('block_dedication', $records);
             // Save the last time we saved some records if we haven't stored newer items yet.
             // Basically prevents cli process for old stuff from saving data.
-            if (get_config('block_dedication', 'lastcalcualted') < $timeend) {
-                set_config('block_dedication', 'lastcalcualted', $timeend);
+            if (get_config('block_dedication', 'lastcalculated') < $timeend) {
+                set_config('block_dedication', 'lastcalculated', $timeend);
             }
         }
     }

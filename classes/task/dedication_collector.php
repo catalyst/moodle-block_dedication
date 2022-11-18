@@ -39,7 +39,7 @@ class dedication_collector extends \core\task\scheduled_task {
      * Execute the task.
      */
     public function execute() {
-        $lastruntime = get_config('block_dedication', 'lastcalcualted');
+        $lastruntime = get_config('block_dedication', 'lastcalculated');
         if (empty($lastruntime)) {
             // First time this task has been run - lets pull in last 12 weeks of time calculations.
             $lastruntime = time() - WEEKSECS * 12;
