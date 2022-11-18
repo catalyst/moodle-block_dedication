@@ -40,11 +40,11 @@ class dedication_collector extends \core\task\scheduled_task {
      */
     public function execute() {
         global $DB;
-        $lastruntime = round($this->get_last_task_runtime(),0);
+        $lastruntime = round($this->get_last_task_runtime(), 0);
         $thisruntime = time();
 
         // Process Start - get all active courses
-        // TODO: Filter the course list more, right now course end date used to filter the list
+        // TODO: Filter the course list more, right now course end date used to filter the list.
         $sql = 'SELECT
                     c.id,
                     c.enddate
@@ -55,17 +55,18 @@ class dedication_collector extends \core\task\scheduled_task {
                 ';
         $courses = $DB->get_records_sql($sql, array($thisruntime));
 
-        // Go through all courses and find enrolled users
+        // Go through all courses and find enrolled users.
         foreach ($courses as $course) {
-            // find min time
+            // Find min time.
             $logs = new manager($course, $lastruntime, $thisruntime);
 
             $students = get_enrolled_users(\context_course::instance($course->id));
             $events = $logs->get_students_dedication($students);
 
-            foreach($events as $event) {
+            $records = [];
+            foreach ($events as $event) {
                 $data = new \stdClass();
-                if($event->dedicationtime == 0) {
+                if ($event->dedicationtime == 0) {
                     break;
                 } else {
                     $data->userid = $event->user->id;
@@ -73,8 +74,10 @@ class dedication_collector extends \core\task\scheduled_task {
                     $data->courseid = $course->id;
                     $data->timecollected = $thisruntime;
                 }
-
-                $DB->insert_record('block_dedication', $data);
+                $records[] = $data;
+            }
+            if (!empty($records)) {
+                $DB->insert_records('block_dedication', $records);
             }
         }
 
