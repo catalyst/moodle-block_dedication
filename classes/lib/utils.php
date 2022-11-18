@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 class utils {
 
-    public static $logstores = array('logstore_standard', 'logstore_legacy');
+    public static $logstores = array('logstore_standard');
 
     /**
      * Return formatted events from logstores.
