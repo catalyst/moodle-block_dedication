@@ -35,10 +35,12 @@ class manager {
     protected $maxtime;
     protected $limit;
 
-    public function __construct($course, $mintime, $maxtime) {
+    public function __construct($course, $mintime = null, $maxtime = null) {
         $this->course = $course;
-        $this->mintime = $mintime;
-        $this->maxtime = $maxtime;
+
+        $startdate = empty($course->startdate) ? time() - (90 * DAYSECS) : $course->startdate;
+        $this->mintime = empty($mintime) ? $mintime : $startdate;
+        $this->maxtime = empty($maxtime) ? time() : $maxtime;
         $limit = get_config('block_dedication', 'session_limit');
         $this->limit = empty($limit) ? HOURSECS : $limit;
     }

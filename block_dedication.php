@@ -33,17 +33,6 @@ class block_dedication extends block_base {
         $this->title = get_string('pluginname', 'block_dedication');
     }
 
-    public function specialization() {
-        // Previous block versions didn't have config settings.
-        if ($this->config === null) {
-            $this->config = new stdClass();
-        }
-        // Set always show_dedication config settings to avoid errors.
-        if (!isset($this->config->show_dedication)) {
-            $this->config->show_dedication = 0;
-        }
-    }
-
     public function get_content() {
         global $OUTPUT, $USER;
 
@@ -51,23 +40,14 @@ class block_dedication extends block_base {
             return $this->content;
         }
 
-        if (empty($this->instance)) {
-            $this->content = '';
-            return $this->content;
-        }
-
         $this->content = new stdClass();
         $this->content->text = '';
         $this->content->footer = '';
 
-        if ($this->config->show_dedication == 1) {
-            $mintime = $this->page->course->startdate;
-            $maxtime = time();
-            $dm = new block_dedication\lib\manager($this->page->course, $mintime, $maxtime);
-            $dedicationtime = $dm->get_user_dedication($USER, true);
-            $this->content->text .= html_writer::tag('p', get_string('dedication_estimation', 'block_dedication'));
-            $this->content->text .= html_writer::tag('p', block_dedication\lib\utils::format_dedication($dedicationtime));
-        }
+        $dm = new block_dedication\lib\manager($this->page->course);
+        $dedicationtime = $dm->get_user_dedication($USER, true);
+        $this->content->text .= html_writer::tag('p', get_string('dedication_estimation', 'block_dedication'));
+        $this->content->text .= html_writer::tag('p', block_dedication\lib\utils::format_dedication($dedicationtime));
 
         if (has_capability('block/dedication:use', context_block::instance($this->instance->id))) {
             $this->content->footer .= html_writer::tag('hr', null);
@@ -83,17 +63,10 @@ class block_dedication extends block_base {
     }
 
     public function applicable_formats() {
-        return array('course' => true);
+        return ['admin' => false,
+                'site-index' => false,
+                'course-view' => true,
+                'mod' => false,
+                'my' => true];
     }
-
-    /**
-     * Controls global configurability of block.
-     *
-     * @return bool
-     */
-    public function has_config(): bool {
-        return true;
-    }
-
-
 }
