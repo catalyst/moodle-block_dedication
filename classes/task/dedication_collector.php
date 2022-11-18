@@ -41,6 +41,7 @@ class dedication_collector extends \core\task\scheduled_task {
     public function execute() {
         $lastruntime = get_config('block_dedication', 'lastcalcualted');
         if (empty($lastruntime)) {
+            // First time this task has been run - lets pull in last 12 weeks of time calculations.
             $lastruntime = time() - WEEKSECS * 12;
         } else if ($lastruntime > time() - (6 * HOURSECS)) {
             mtrace("This task can only be triggered every 6 hours");
