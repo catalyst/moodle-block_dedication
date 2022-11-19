@@ -172,12 +172,10 @@ switch ($action) {
         foreach ($rows as $index => $row) {
             $totaldedication += $row->dedicationtime;
             $userurl = new moodle_url($pageurl, array('action' => 'user', 'id' => $row->user->id));
-            $groupurl = new moodle_url($pageurl, array('action' => 'group', 'id' => $row->groupid));
             $rows[$index] = array(
                 $OUTPUT->user_picture($row->user, array('courseid' => $course->id)),
                 html_writer::link($userurl, $row->user->firstname),
                 html_writer::link($userurl, $row->user->lastname),
-                html_writer::link($groupurl, isset($groups[$row->groupid]) ? $groups[$row->groupid]->name : ''),
                 \block_dedication\lib\utils::format_dedication($row->dedicationtime),
                 $row->connectionratio
             );
