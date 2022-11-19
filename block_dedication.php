@@ -69,4 +69,14 @@ class block_dedication extends block_base {
                 'mod' => false,
                 'my' => true];
     }
+
+    /**
+     * Controls global configurability of block.
+     *
+     * @return bool
+     */
+    public function has_config(): bool {
+        return true;
+    }
+
 }

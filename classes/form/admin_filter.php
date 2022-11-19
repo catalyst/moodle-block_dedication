@@ -64,13 +64,6 @@ class admin_filter extends moodleform {
         $mform->addElement('date_time_selector', 'maxtime', get_string('admin_filter_maxtime', 'block_dedication'));
         $mform->addHelpButton('maxtime', 'admin_filter_maxtime', 'block_dedication');
 
-        $limitoptions = array();
-        for ($i = 1; $i <= 150; $i++) {
-            $limitoptions[$i * 60] = $i;
-        }
-        $mform->addElement('select', 'limit', get_string('admin_filter_limit', 'block_dedication'), $limitoptions);
-        $mform->addHelpButton('limit', 'admin_filter_limit', 'block_dedication');
-
         // Buttons.
         $this->add_action_buttons(false, get_string('admin_filter_submit', 'block_dedication'));
     }
