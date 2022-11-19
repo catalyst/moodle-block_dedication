@@ -181,17 +181,12 @@ switch ($action) {
             );
         }
 
-        if ($action == 'group') {
-            $view->header[] = get_string('dedicationgroup', 'block_dedication', $groups[$groupid]->name);
-        } else {
-            $view->header[] = get_string('dedicationall', 'block_dedication');
-        }
         $view->header[] = get_string('period', 'block_dedication', (object) array('mintime' => userdate($mintime), 'maxtime' => userdate($maxtime)));
         $view->header[] = get_string('perioddiff', 'block_dedication', format_time($maxtime - $mintime));
         $view->header[] = get_string('totaldedication', 'block_dedication', \block_dedication\lib\utils::format_dedication($totaldedication));
         $view->header[] = get_string('meandedication', 'block_dedication', \block_dedication\lib\utils::format_dedication(count($rows) ? $totaldedication / count($rows) : 0));
 
-        $view->table->head = array('', get_string('firstname'), get_string('lastname'), get_string('group'),
+        $view->table->head = array('', get_string('firstname'), get_string('lastname'),
             get_string('dedicationrow', 'block_dedication'), get_string('connectionratiorow', 'block_dedication'));
         $view->table->data = $rows;
         break;
