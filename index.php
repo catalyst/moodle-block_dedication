@@ -43,6 +43,8 @@ $PAGE->set_url('/block/dedication/index.php', ['id' => $courseid]);
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('report');
 $PAGE->add_body_class('limitedwidth');
+$PAGE->set_title("$course->fullname: ".get_string('sessionduration', 'block_dedication'));
+$PAGE->set_heading($course->fullname);
 
 echo $OUTPUT->header();
 
