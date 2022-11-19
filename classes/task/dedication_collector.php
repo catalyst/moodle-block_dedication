@@ -41,6 +41,7 @@ class dedication_collector extends \core\task\scheduled_task {
     public function execute() {
         $lastruntime = get_config('block_dedication', 'lastcalculated');
         if (empty($lastruntime)) {
+            mtrace("This is the first time this task has been run, calculate data for last 12 weeks");
             // First time this task has been run - lets pull in last 12 weeks of time calculations.
             $lastruntime = time() - WEEKSECS * 12;
         } else if ($lastruntime > time() - (6 * HOURSECS)) {
@@ -48,6 +49,5 @@ class dedication_collector extends \core\task\scheduled_task {
             return;
         }
         utils::generate_stats($lastruntime, time());
-
     }
 }

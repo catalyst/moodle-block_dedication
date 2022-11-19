@@ -23,7 +23,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
- $tasks = [
+$tasks = [
     [
         'classname' => 'block_dedication\task\dedication_collector',
         'blocking' => 0,

@@ -211,14 +211,14 @@ class utils {
 
     }
 
-    public function calculate($timestart, $timeend) {
-
+    public static function calculate($timestart, $timeend) {
         global $DB;
+        mtrace("calculating stats from: " . userdate($timestart) . " to :". userdate($timeend));
         // TODO: accessing logs data uses the log store reader classes - we should look at converting this to do something similar if possible.
         // Get list of courses and users we want to calculate for.
         $sql = "SELECT distinct ". $DB->sql_concat_join("':'", ['courseid', 'userid'])." as tmpid, courseid, userid
                   FROM {logstore_standard_log}
-                 WHERE timecreated >= :timesart AND timecreated < :timeend";
+                 WHERE timecreated >= :timestart AND timecreated < :timeend AND userid > 0 AND courseid > 0";
         $records = $DB->get_recordset_sql($sql, ['timestart' => $timestart, 'timeend' => $timeend]);
         $courses = [];
         foreach ($records as $record) {
@@ -228,8 +228,13 @@ class utils {
             $courses[$record->courseid][] = $record->userid;
         }
         $records->close();
+
         foreach ($courses as $courseid => $users) {
             $course = $DB->get_record('course', ['id' => $courseid]);
+            if (empty($course)) {
+                mtrace("Course $courseid not found, it may have been deleted.");
+                continue;
+            }
             $logs = new manager($course, $timestart, $timeend);
 
             $events = $logs->get_students_dedication($users);
@@ -240,7 +245,12 @@ class utils {
                 if ($event->dedicationtime == 0) {
                     break;
                 } else {
-                    $data->userid = $event->user->id;
+                    if (is_numeric($event->user)) {
+                        // Sometimes full user object is passed, other times just the id.
+                        $data->userid = $event->user;
+                    } else {
+                        $data->userid = $event->user->id;
+                    }
                     $data->timespent = $event->dedicationtime;
                     $data->courseid = $course->id;
                     $data->timestart = $timestart;
@@ -254,7 +264,7 @@ class utils {
             // Save the last time we saved some records if we haven't stored newer items yet.
             // Basically prevents cli process for old stuff from saving data.
             if (get_config('block_dedication', 'lastcalculated') < $timeend) {
-                set_config('block_dedication', 'lastcalculated', $timeend);
+                set_config('lastcalculated', $timeend, 'block_dedication');
             }
         }
     }

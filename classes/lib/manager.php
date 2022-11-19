@@ -59,15 +59,14 @@ class manager {
         );
 
         $perioddays = ($this->maxtime - $this->mintime) / DAYSECS;
-
         foreach ($students as $user) {
             $daysconnected = array();
-            if (is_int($user)) { // Only userids passed in array.
-                $params['userid'] = $user;
+            if (is_numeric($user)) { // Only userids passed in array.
+                $userid = $user;
             } else {
-                $params['userid'] = $user->id;
+                $userid = $user->id;
             }
-
+            $params['userid'] = $userid;
             $logs = utils::get_events_select($where, $params);
 
             if ($logs) {
@@ -89,7 +88,7 @@ class manager {
             } else {
                 $dedication = 0;
             }
-            $groups = groups_get_user_groups($this->course->id, $user->id);
+            $groups = groups_get_user_groups($this->course->id, $userid);
             $group = !empty($groups) && !empty($groups[0]) ? $groups[0][0] : 0;
             $rows[] = (object) array(
                 'user' => $user,
