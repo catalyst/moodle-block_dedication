@@ -122,8 +122,8 @@ switch ($action) {
         $view->header[] = get_string('userdedication', 'block_dedication', $OUTPUT->user_picture($user, array('courseid' => $course->id)) . fullname($user));
         $view->header[] = get_string('period', 'block_dedication', (object) array('mintime' => userdate($mintime), 'maxtime' => userdate($maxtime)));
         $view->header[] = get_string('perioddiff', 'block_dedication', format_time($maxtime - $mintime));
-        $view->header[] = get_string('totaldedication', 'block_dedication', block_dedication_utils::format_dedication($totaldedication));
-        $view->header[] = get_string('meandedication', 'block_dedication', block_dedication_utils::format_dedication(count($rows) ? $totaldedication / count($rows) : 0));
+        $view->header[] = get_string('totaldedication', 'block_dedication',\block_dedication\lib\utils::format_dedication($totaldedication));
+        $view->header[] = get_string('meandedication', 'block_dedication', \block_dedication\lib\utils::format_dedication(count($rows) ? $totaldedication / count($rows) : 0));
 
         $view->table->head = array(get_string('sessionstart', 'block_dedication'), get_string('sessionduration', 'block_dedication'), 'IP');
         $view->table->data = $rows;

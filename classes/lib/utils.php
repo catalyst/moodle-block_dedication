@@ -229,6 +229,7 @@ class utils {
         }
         $records->close();
 
+        $records = [];
         foreach ($courses as $courseid => $users) {
             $course = $DB->get_record('course', ['id' => $courseid]);
             if (empty($course)) {
@@ -237,26 +238,20 @@ class utils {
             }
             $logs = new manager($course, $timestart, $timeend);
 
-            $events = $logs->get_students_dedication($users);
-
-            $records = [];
-            foreach ($events as $event) {
-                $data = new \stdClass();
-                if ($event->dedicationtime == 0) {
-                    break;
-                } else {
-                    if (is_numeric($event->user)) {
-                        // Sometimes full user object is passed, other times just the id.
-                        $data->userid = $event->user;
+            foreach ($users as $user) {
+                $events = $logs->get_user_dedication($user);
+                foreach ($events as $event) {
+                    $data = new \stdClass();
+                    if ($event->dedicationtime == 0) {
+                        continue;
                     } else {
-                        $data->userid = $event->user->id;
+                        $data->userid = $user;
+                        $data->timespent = $event->dedicationtime;
+                        $data->courseid = $course->id;
+                        $data->timestart = $event->start_date;
                     }
-                    $data->timespent = $event->dedicationtime;
-                    $data->courseid = $course->id;
-                    $data->timestart = $timestart;
-                    $data->timeend = $timeend;
+                    $records[] = $data;
                 }
-                $records[] = $data;
             }
         }
         if (!empty($records)) {

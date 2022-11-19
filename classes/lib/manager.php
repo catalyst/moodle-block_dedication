@@ -88,11 +88,8 @@ class manager {
             } else {
                 $dedication = 0;
             }
-            $groups = groups_get_user_groups($this->course->id, $userid);
-            $group = !empty($groups) && !empty($groups[0]) ? $groups[0][0] : 0;
             $rows[] = (object) array(
                 'user' => $user,
-                'groupid' => $group,
                 'dedicationtime' => $dedication,
                 'connectionratio' => round(count($daysconnected) / $perioddays, 2),
             );
@@ -142,14 +139,19 @@ class manager {
 
     public function get_user_dedication($user, $simple = false) {
         $config = get_config('block_dedication');
+        if (is_numeric($user)) {
+            $userid = $user;
+        } else {
+            $userid = $user->id;
+        }
         $where = 'courseid = :courseid AND userid = :userid AND timecreated >= :mintime AND timecreated <= :maxtime';
         $params = array(
             'courseid' => $this->course->id,
-            'userid' => $user->id,
+            'userid' => $userid,
             'mintime' => $this->mintime,
             'maxtime' => $this->maxtime
         );
-        $logs = \utils::get_events_select($where, $params);
+        $logs = utils::get_events_select($where, $params);
 
         if ($simple) {
             // Return total dedication time in seconds.
