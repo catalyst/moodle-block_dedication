@@ -18,27 +18,14 @@ declare(strict_types=1);
 
 namespace block_dedication\local\entities;
 
-
-use context_helper;
-use context_system;
-use context_user;
-use core_component;
-use html_writer;
 use lang_string;
-use moodle_url;
-use stdClass;
-use core_user\fields;
 use core_reportbuilder\local\entities\base;
-use core_reportbuilder\local\filters\boolean_select;
 use core_reportbuilder\local\filters\date;
-use core_reportbuilder\local\filters\select;
-use core_reportbuilder\local\filters\text;
-use core_reportbuilder\local\filters\user as user_filter;
-use core_reportbuilder\local\helpers\user_profile_fields;
 use core_reportbuilder\local\helpers\format;
 use core_reportbuilder\local\report\column;
 use core_reportbuilder\local\report\filter;
 use block_dedication\lib\utils;
+use core_reportbuilder\local\filters\duration;
 
 /**
  *
@@ -69,7 +56,7 @@ class dedication extends base {
      * @return lang_string
      */
     protected function get_default_entity_title(): lang_string {
-        return new lang_string('entitiy_dedication', 'block_dedication');
+        return new lang_string('entity_dedication', 'block_dedication');
     }
 
     /**
@@ -85,6 +72,12 @@ class dedication extends base {
             $this->add_column($column);
         }
 
+        $filters = $this->get_all_filters();
+        foreach ($filters as $filter) {
+            $this
+                ->add_filter($filter)
+                ->add_condition($filter);
+        }
 
         return $this;
     }
@@ -95,14 +88,11 @@ class dedication extends base {
      * @throws \coding_exception
      */
     protected function get_all_columns(): array {
-        $config = get_config('block_dedication');
         $dedicationalias = $this->get_table_alias('block_dedication');
-        $mins = 60;
 
-       // die();
         $columns[] = (new column(
             'timespent',
-            new lang_string('column_dedicatoin', 'block_dedication'),
+            new lang_string('sessionduration', 'block_dedication'),
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
@@ -113,7 +103,49 @@ class dedication extends base {
                 return $format;
             });
 
+        $columns[] = (new column(
+            'timestart',
+            new lang_string('sessionstart', 'block_dedication'),
+            $this->get_entity_name()
+        ))
+            ->add_joins($this->get_joins())
+            ->add_fields("$dedicationalias.timestart")
+            ->set_type(column::TYPE_TIMESTAMP)
+            ->set_callback([format::class, 'userdate']);
+
         return $columns;
+    }
+
+    /**
+     * Return list of all available filters
+     *
+     * @return filter[]
+     */
+    protected function get_all_filters(): array {
+
+        $filters = [];
+        $dedicationalias = $this->get_table_alias('block_dedication');
+
+        // Module name filter.
+        $filters[] = (new filter(
+            duration::class,
+            'timespent',
+            new lang_string('sessionduration', 'block_dedication'),
+            $this->get_entity_name(),
+            "$dedicationalias.timespent"
+        ))
+            ->add_joins($this->get_joins());
+
+        $filters[] = (new filter(
+            date::class,
+            'timestart',
+            new lang_string('sessionstart', 'block_dedication'),
+            $this->get_entity_name(),
+            "$dedicationalias.timestart"
+        ))
+            ->add_joins($this->get_joins());
+
+        return $filters;
     }
 
 }

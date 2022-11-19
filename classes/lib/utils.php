@@ -213,7 +213,7 @@ class utils {
 
     public static function calculate($timestart, $timeend) {
         global $DB;
-        mtrace("calculating stats from: " . userdate($timestart) . " to :". userdate($timeend));
+        mtrace("calculating stats from: " . userdate($timestart) . " to:". userdate($timeend));
         // TODO: accessing logs data uses the log store reader classes - we should look at converting this to do something similar if possible.
         // Get list of courses and users we want to calculate for.
         $sql = "SELECT distinct ". $DB->sql_concat_join("':'", ['courseid', 'userid'])." as tmpid, courseid, userid

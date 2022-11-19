@@ -17,13 +17,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 $capabilities = [
-    'block/dedication:use' => [
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_BLOCK,
-        'archetypes' => ['teacher' => CAP_ALLOW,
-                         'editingteacher' => CAP_ALLOW,
-                         'manager' => CAP_ALLOW]
-    ],
     'block/dedication:addinstance' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_BLOCK,
@@ -37,5 +30,12 @@ $capabilities = [
         'archetypes' => ['editingteacher' => CAP_ALLOW,
                          'manager' => CAP_ALLOW],
         'clonepermissionsfrom' => 'moodle/site:manageblocks'
+    ],
+    'block/dedication:viewreports' => [
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => ['teacher' => CAP_ALLOW,
+                         'editingteacher' => CAP_ALLOW,
+                         'manager' => CAP_ALLOW]
     ],
 ];

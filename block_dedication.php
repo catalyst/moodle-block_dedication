@@ -49,7 +49,7 @@ class block_dedication extends block_base {
         $this->content->text .= html_writer::tag('p', get_string('dedication_estimation', 'block_dedication'));
         $this->content->text .= html_writer::tag('p', block_dedication\lib\utils::format_dedication($dedicationtime));
 
-        if (has_capability('block/dedication:use', context_block::instance($this->instance->id))) {
+        if (has_capability('block/dedication:viewreports', context_block::instance($this->instance->id))) {
             $this->content->footer .= html_writer::tag('hr', null);
             $this->content->footer .= html_writer::tag('p', get_string('access_info', 'block_dedication'));
             $url = new moodle_url('/blocks/dedication/report.php', array(
