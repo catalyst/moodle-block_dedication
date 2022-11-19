@@ -110,7 +110,7 @@ switch ($action) {
         $totaldedication = 0;
         $rows = $DB->get_records('block_dedication', ['userid' => $user->id, 'courseid' => $course->id]);
         foreach ($rows as $index => $row) {
-            $totaldedication += $row->dedicationtime;
+            $totaldedication += $row->timespent;
             $rows[$index] = array(
                 userdate($row->timestart),
                 \block_dedication\lib\utils::format_dedication($row->timespent),
