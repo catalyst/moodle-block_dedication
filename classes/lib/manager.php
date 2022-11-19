@@ -39,7 +39,7 @@ class manager {
         $this->course = $course;
 
         $startdate = empty($course->startdate) ? time() - (90 * DAYSECS) : $course->startdate;
-        $this->mintime = empty($mintime) ? $mintime : $startdate;
+        $this->mintime = !empty($mintime) ? $mintime : $startdate;
         $this->maxtime = empty($maxtime) ? time() : $maxtime;
         $limit = get_config('block_dedication', 'session_limit');
         $this->limit = empty($limit) ? HOURSECS : $limit;

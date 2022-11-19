@@ -237,7 +237,6 @@ class utils {
                 continue;
             }
             $logs = new manager($course, $timestart, $timeend);
-
             foreach ($users as $user) {
                 $events = $logs->get_user_dedication($user);
                 foreach ($events as $event) {
