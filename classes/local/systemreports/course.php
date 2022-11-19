@@ -20,6 +20,9 @@ use block_dedication\local\entities\dedication;
 use core_reportbuilder\local\helpers\database;
 use core_reportbuilder\system_report;
 use core_reportbuilder\local\entities\user;
+use core_reportbuilder\local\report\action;
+use moodle_url;
+use pix_icon;
 
 /**
  * Dedication system level report.
@@ -47,6 +50,8 @@ class course extends system_report {
         $this->set_main_table('block_dedication', $entitymainalias);
         $this->add_entity($entitymain);
 
+        $this->add_base_fields("{$entitymainalias}.id, {$entitymainalias}.userid");
+
         // Add core user join.
         $usercore = new user();
         $usercorealias = $usercore->get_table_alias('user');
@@ -63,6 +68,11 @@ class course extends system_report {
         // Now we can call our helper methods to add the content we want to include in the report.
         $this->add_columns();
         $this->add_filters();
+
+        // Action to download individual task log.
+        $this->add_action((new action(
+            new moodle_url('/blocks/dedication/user.php', ['id' => $course->id, 'userid' => ':userid']),
+            new pix_icon('i/search', get_string('view')))));
 
         // Set if report can be downloaded.
         $this->set_downloadable(true);
