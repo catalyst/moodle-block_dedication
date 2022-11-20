@@ -51,12 +51,8 @@ class block_dedication extends block_base {
 
         if (has_capability('block/dedication:viewreports', context_block::instance($this->instance->id))) {
             $this->content->footer .= html_writer::tag('hr', null);
-            $this->content->footer .= html_writer::tag('p', get_string('access_info', 'block_dedication'));
-            $url = new moodle_url('/blocks/dedication/report.php', array(
-                'courseid' => $this->page->course->id,
-                'id' => $this->instance->id,
-            ));
-            $this->content->footer .= $OUTPUT->single_button($url, get_string('access_button', 'block_dedication'), 'get');
+            $url = new moodle_url('/blocks/dedication/index.php', ['id' => $this->page->course->id]);
+            $this->content->footer .= $OUTPUT->single_button($url, get_string('timespentreport', 'block_dedication'), 'get');
         }
 
         return $this->content;
