@@ -48,7 +48,6 @@ $PAGE->set_heading($course->fullname);
 $PAGE->set_context($context);
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('timespentincourse', 'block_dedication'));
 $usercontext = context_user::instance($user->id);
 $headerinfo = array('heading' => fullname($user), 'user' => $user, 'usercontext' => $usercontext);
 echo $OUTPUT->context_header($headerinfo, 2);
