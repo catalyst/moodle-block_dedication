@@ -153,7 +153,11 @@ switch ($action) {
 // START PAGE: layout, headers, title, boxes...
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('timespentincourse', 'block_dedication'));
-
+$lastupdated = get_config('block_dedication', 'lastcalculated');
+if (!empty($lastupdated)) {
+    echo html_writer::span(get_string('lastupdated', 'block_dedication',
+        userdate($lastupdated, get_string('strftimedatetimeshort', 'core_langconfig'))), 'dimmed_text');
+}
 $totaldedication = $DB->get_field_sql("SELECT SUM(timespent)
                                          FROM {block_dedication}
                                         WHERE courseid = ?",
@@ -171,6 +175,7 @@ $mform->display();
 
 echo html_writer::div(get_string('totaltimespent', 'block_dedication', $totaldedication));
 echo html_writer::div(get_string('averagetimespent', 'block_dedication', $averagededication));
+
 
 // Download button.
 echo html_writer::start_tag('div', array('class' => 'download-dedication'));

@@ -127,7 +127,7 @@ class manager {
                 $row->user->lastname,
                 isset($groups[$row->groupid]) ? $groups[$row->groupid]->name : '',
                 round($row->dedicationtime / MINSECS),
-                \utils::format_dedication($row->dedicationtime),
+                utils::format_dedication($row->dedicationtime),
                 $row->connectionratio,
             );
         }

@@ -36,7 +36,9 @@ $userid = required_param('userid', PARAM_INT);
 $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
 require_login($course);
 $context = context_course::instance($course->id);
-require_capability('block/dedication:viewreports', $context);
+if ($userid <> $USER->id) {
+    require_capability('block/dedication:viewreports', $context);
+}
 
 $user = $DB->get_record('user', ['id' => $userid], '*', MUST_EXIST);
 
@@ -49,6 +51,11 @@ $PAGE->set_context($context);
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('timespentincourse', 'block_dedication'));
+$lastupdated = get_config('block_dedication', 'lastcalculated');
+if (!empty($lastupdated)) {
+    echo html_writer::span(get_string('lastupdated', 'block_dedication',
+        userdate($lastupdated, get_string('strftimedatetimeshort', 'core_langconfig'))), 'dimmed_text');
+}
 $usercontext = context_user::instance($user->id);
 $headerinfo = array('heading' => fullname($user), 'user' => $user, 'usercontext' => $usercontext);
 echo $OUTPUT->context_header($headerinfo, 2);

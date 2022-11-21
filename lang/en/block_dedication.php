@@ -76,3 +76,6 @@ $string['sessionstart'] = 'Session start';
 $string['userdedication'] = 'Detailed course dedication of <em>{$a}</em>.';
 $string['timespentincourse'] = 'Time spent in course';
 $string['lastupdated'] = 'Last updated: {$a}';
+// Block form.
+$string['showestimatedtime'] = 'Show estimated time spent to users';
+$string['showestimatedtime_help'] = 'This setting allows users to see their estimated time spent in the block.';

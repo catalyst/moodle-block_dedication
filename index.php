@@ -62,6 +62,11 @@ $totaldedication = \block_dedication\lib\utils::format_dedication($totaldedicati
 echo $OUTPUT->heading(get_string('timespentincourse', 'block_dedication'));
 echo html_writer::div(get_string('totaltimespent', 'block_dedication', $totaldedication));
 echo html_writer::div(get_string('averagetimespent', 'block_dedication', $averagededication));
+$lastupdated = get_config('block_dedication', 'lastcalculated');
+if (!empty($lastupdated)) {
+    echo html_writer::span(get_string('lastupdated', 'block_dedication',
+        userdate($lastupdated, get_string('strftimedatetimeshort', 'core_langconfig'))), 'dimmed_text');
+}
 
 $report = system_report_factory::create(course::class, context_course::instance($courseid));
 

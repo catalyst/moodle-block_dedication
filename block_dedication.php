@@ -34,30 +34,48 @@ class block_dedication extends block_base {
         $this->title = get_string('pluginname', 'block_dedication');
     }
 
+    /** Block level config. */
+    public function specialization() {
+        // Previous block versions didn't have config settings.
+        if ($this->config === null) {
+            $this->config = new stdClass();
+        }
+        // Set always show_dedication config settings to avoid errors.
+        if (!isset($this->config->show_dedication)) {
+            $this->config->show_dedication = 1;
+        }
+    }
+
     public function get_content() {
-        global $OUTPUT, $USER, $COURSE;
+        global $USER, $COURSE;
 
         if ($this->content !== null) {
             return $this->content;
         }
-
+        $showtimespent = empty($this->config->show_dedication) ? false : true;
         $this->content = new stdClass();
         $this->content->text = '';
         $this->content->footer = '';
 
-        $timespent = utils::timespent($COURSE->id, $USER->id);
-        $this->content->text .= html_writer::tag('p', get_string('timespent_estimation', 'block_dedication'));
-        $this->content->text .= html_writer::tag('p', $timespent);
+        if ($showtimespent) {
+            $timespent = utils::timespent($COURSE->id, $USER->id);
+            $this->content->text .= html_writer::tag('p', get_string('timespent_estimation', 'block_dedication'));
+            $this->content->text .= html_writer::tag('p', $timespent);
 
-        $lastupdated = get_config('block_dedication', 'lastcalculated');
-        if (!empty($lastupdated)) {
-            $this->content->footer .= html_writer::span(get_string('lastupdated', 'block_dedication', userdate($lastupdated)));
+            $lastupdated = get_config('block_dedication', 'lastcalculated');
+            if (!empty($lastupdated)) {
+                $this->content->footer .= html_writer::span(get_string('lastupdated', 'block_dedication',
+                    userdate($lastupdated, get_string('strftimedatetimeshort', 'core_langconfig'))), 'dimmed_text');
+            }
         }
-
         if (has_capability('block/dedication:viewreports', context_course::instance($COURSE->id))) {
-            $this->content->footer .= html_writer::tag('hr', null);
             $url = new moodle_url('/blocks/dedication/report.php', ['courseid' => $COURSE->id]);
-            $this->content->footer .= $OUTPUT->single_button($url, get_string('timespentreport', 'block_dedication'), 'get');
+            $this->content->footer .= html_writer::tag('p', html_writer::link($url,
+                                                       get_string('timespentreport', 'block_dedication')));
+        } else if ($showtimespent) {
+            $url = new moodle_url('/blocks/dedication/user.php', ['id' => $COURSE->id, 'userid' => $USER->id]);
+            $this->content->footer .= html_writer::tag('p', html_writer::link($url,
+                                                       get_string('timespentreport', 'block_dedication')));
         }
 
         return $this->content;
@@ -68,7 +86,7 @@ class block_dedication extends block_base {
                 'site-index' => false,
                 'course-view' => true,
                 'mod' => false,
-                'my' => true];
+                'my' => false];
     }
 
     /**
