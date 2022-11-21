@@ -65,7 +65,7 @@ $string['timespentreport'] = 'Time-spent report';
 $string['period'] = 'Period since <em>{$a->mintime}</em> to <em>{$a->maxtime}</em>';
 $string['perioddiff'] = '<strong>Elapsed time:</strong>  {$a}';
 
-$string['dedicationrow'] = 'Course dedication';
+$string['dedicationrow'] = 'Time spent in course';
 $string['connectionratiorow'] = 'Connections per day';
 $string['dedicationall'] = 'All course members dedication. Click on any name to see a detailed course dedication for it.';
 $string['period'] = 'Period since <em>{$a->mintime}</em> to <em>{$a->maxtime}</em>';

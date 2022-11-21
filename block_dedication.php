@@ -51,7 +51,7 @@ class block_dedication extends block_base {
 
         if (has_capability('block/dedication:viewreports', context_block::instance($this->instance->id))) {
             $this->content->footer .= html_writer::tag('hr', null);
-            $url = new moodle_url('/blocks/dedication/index.php', ['id' => $this->page->course->id]);
+            $url = new moodle_url('/blocks/dedication/report.php', ['courseid' => $this->page->course->id]);
             $this->content->footer .= $OUTPUT->single_button($url, get_string('timespentreport', 'block_dedication'), 'get');
         }
 
