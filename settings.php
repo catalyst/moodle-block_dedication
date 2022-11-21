@@ -36,6 +36,12 @@ if ($ADMIN->fulltree) {
         new lang_string('session_limit_desc', 'block_dedication'),
         HOURSECS, PARAM_INT)
     );
+
+    $settings->add(new admin_setting_configduration(
+        'block_dedication/allloglifetime',
+        new lang_string('allloglifetime', 'block_dedication'),
+        new lang_string('configallloglifetime', 'block_dedication'), YEARSECS, PARAM_INT));
+
 }
 $ADMIN->add('reports', new admin_externalpage('block_dedication_report',
     get_string('reporttitle', 'block_dedication'),

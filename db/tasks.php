@@ -34,4 +34,14 @@ $tasks = [
         'dayofweek' => '*',
         'disabled' => false
     ],
+    [
+        'classname' => 'block_dedication\task\cleanup',
+        'blocking' => 0,
+        'minute' => 'R',
+        'hour' => '01',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*',
+        'disabled' => false
+    ],
 ];

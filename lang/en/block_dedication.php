@@ -79,3 +79,6 @@ $string['lastupdated'] = 'Last updated: {$a}';
 // Block form.
 $string['showestimatedtime'] = 'Show estimated time spent to users';
 $string['showestimatedtime_help'] = 'This setting allows users to see their estimated time spent in the block.';
+$string['cleanuptask'] = 'Session history cleanup task';
+$string['allloglifetime'] = 'Keep session history for';
+$string['configallloglifetime'] = 'This specifies the length of time you want to keep data about session duration. Sessions that are older than this age are automatically deleted.';

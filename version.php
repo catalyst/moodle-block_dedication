@@ -24,8 +24,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'block_dedication';
-$plugin->release = 2022111900;
-$plugin->version = 2022111900;
+$plugin->release = 2022112101;
+$plugin->version = 2022112101;
 $plugin->requires = 2022041904; // Requires 4.0
 $plugin->maturity = MATURITY_ALPHA;
 $plugin->supported = [400, 401];
