@@ -10,8 +10,8 @@ Maintenance for this plugin has been taken over by Catalyst IT thanks to funding
 
 NOTE: This new version of the block differs from the original version in some significant ways:
 1. To unify global reporting across all courses, some settings previously set within the block are now "site-level" settings, instead of being able to customise at the course level within the block settings.
-2. Timespent information is now generated via a scheduled task - this improves general performance but also enables the data to be exposed within Moodle's new Report Builder custom reporting - see issue #59
-3. Changing the site level settings (session_limit etc) does not recalculate existing records, this will be addressed in a future release.
+2. Timespent information is now generated via a scheduled task - this improves general performance but also enables the data to be exposed within Moodle's new Report Builder custom reporting.
+3. Changing the site level settings (session_limit etc) does not recalculate existing records, this will be addressed in a future release - see issue #59.
 3. The first time this new version is installed, only the last 12 weeks of sessions usage is calculated - if you want to calculate further historical data see the CLI script in the CLI folder (requires server-level access to execute.).
 4. Users (students) can now see a link to a report that shows them a list of all ther sessions and estimated durations.
 5. Custom reportbuilder source is available for site-level reporting (under admin > reports > reportbuilder > custom reports).
