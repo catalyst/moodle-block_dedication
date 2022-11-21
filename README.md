@@ -9,9 +9,11 @@ Maintenance for this plugin has been taken over by Catalyst IT thanks to funding
 ## This is Work in Progress code under development - use at your own risk, see some of the open issues in the tracker for known issues.
 
 NOTE: This new version of the block differs from the original version in some significant ways:
-1. To unify global reporting across all courses, many settings previously set within the block are now "site-level" settings, instead of being able to customise at the course level within the block settings.
-2. As teachers can access reports using normal report navigation, it assumes if you have added the block to a course, you want students to see the dedication data - this differs to previous versions of the block that allowed you to enable/disable student access as a setting. For this reason during the upgrade process the code will find all existing blocks that are set to not allow student access and flag them as hidden to students - allowing the teacher/admin to delete the block or configure the view permissions on the block as required.
-3. Timespent information is now generated via a scheduled task - this improves general performance but also enables the data to be exposed within Moodle's new Report Builder custom reporting.
+1. To unify global reporting across all courses, some settings previously set within the block are now "site-level" settings, instead of being able to customise at the course level within the block settings.
+2. Timespent information is now generated via a scheduled task - this improves general performance but also enables the data to be exposed within Moodle's new Report Builder custom reporting.
+3. Users (students) can now see a link to a report that shows them a list of all ther sessions and estimated durations.
+4. Custom reportbuilder source is available for site-level reporting (under admin > reports > reportbuilder > custom reports).
+5. Course and user-level reporting now uses the reportbuilder api avaialble in Moodle 4.0.
 
 # Branches
 
