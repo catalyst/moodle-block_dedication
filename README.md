@@ -72,5 +72,9 @@ Alternatively commercial-level support is available from Catalyst IT:
 https://www.catalyst.net.nz/
 
 # Credits
+Moodle 4.0 release developed with funding thanks to Canterbury University
+
+![UC-Logo-3-2_3654775638524282877 (1)](https://user-images.githubusercontent.com/362798/202991887-815a122e-5b1b-49f0-8546-0fed94239753.jpg)
+
 
 This block was previously developed and produced by Aday Talavera, CICEI at Las Palmas de Gran Canaria University and the first version for Moodle 1.9 was developed by Borja Rubio Reyes.
