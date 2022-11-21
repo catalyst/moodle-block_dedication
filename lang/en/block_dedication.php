@@ -60,8 +60,8 @@ $string['user_dedication_datasource'] = 'Users Dedication';
 $string['dedication:addinstance'] = 'Allow to add dedication block';
 $string['dedication:myaddinstance'] = 'Allow to add dedication block to dashboard page';
 $string['dedication:viewreports'] = 'Allow to view dedication reports';
-$string['dedication_estimation'] = 'Your estimated dedication time is';
-$string['timespentreport'] = 'Time-spent report';
+$string['timespent_estimation'] = 'Your estimated time spent in course is:';
+$string['timespentreport'] = 'Full report';
 $string['period'] = 'Period since <em>{$a->mintime}</em> to <em>{$a->maxtime}</em>';
 $string['perioddiff'] = '<strong>Elapsed time:</strong>  {$a}';
 
@@ -75,3 +75,4 @@ $string['averagetimespent'] = '<strong>Average time spent in course:</strong> {$
 $string['sessionstart'] = 'Session start';
 $string['userdedication'] = 'Detailed course dedication of <em>{$a}</em>.';
 $string['timespentincourse'] = 'Time spent in course';
+$string['lastupdated'] = 'Last updated: {$a}';

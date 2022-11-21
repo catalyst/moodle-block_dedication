@@ -262,4 +262,25 @@ class utils {
             }
         }
     }
+
+    /**
+     * Helper function to get a users total timespent in course.
+     *
+     * @param int $courseid
+     * @param int $userid
+     * @param boolean $rawformat
+     * @return void
+     */
+    public static function timespent($courseid, $userid, $rawformat=false) {
+        global $DB;
+        $totaldedication = $DB->get_field_sql("SELECT SUM(timespent)
+                                               FROM {block_dedication}
+                                               WHERE courseid = ? AND userid = ?",
+                                              ['courseid' => $courseid, 'userid' => $userid]);
+        if ($rawformat) {
+            return $totaldedication;
+        } else {
+            return self::format_dedication($totaldedication);
+        }
+    }
 }

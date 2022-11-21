@@ -16,6 +16,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+use block_dedication\lib\utils;
 /**
  * Dedication block definition.
  *
@@ -34,7 +35,7 @@ class block_dedication extends block_base {
     }
 
     public function get_content() {
-        global $OUTPUT, $USER;
+        global $OUTPUT, $USER, $COURSE;
 
         if ($this->content !== null) {
             return $this->content;
@@ -44,14 +45,18 @@ class block_dedication extends block_base {
         $this->content->text = '';
         $this->content->footer = '';
 
-        $dm = new block_dedication\lib\manager($this->page->course);
-        $dedicationtime = $dm->get_user_dedication($USER, true);
-        $this->content->text .= html_writer::tag('p', get_string('dedication_estimation', 'block_dedication'));
-        $this->content->text .= html_writer::tag('p', block_dedication\lib\utils::format_dedication($dedicationtime));
+        $timespent = utils::timespent($COURSE->id, $USER->id);
+        $this->content->text .= html_writer::tag('p', get_string('timespent_estimation', 'block_dedication'));
+        $this->content->text .= html_writer::tag('p', $timespent);
 
-        if (has_capability('block/dedication:viewreports', context_block::instance($this->instance->id))) {
+        $lastupdated = get_config('block_dedication', 'lastcalculated');
+        if (!empty($lastupdated)) {
+            $this->content->footer .= html_writer::span(get_string('lastupdated', 'block_dedication', userdate($lastupdated)));
+        }
+
+        if (has_capability('block/dedication:viewreports', context_course::instance($COURSE->id))) {
             $this->content->footer .= html_writer::tag('hr', null);
-            $url = new moodle_url('/blocks/dedication/report.php', ['courseid' => $this->page->course->id]);
+            $url = new moodle_url('/blocks/dedication/report.php', ['courseid' => $COURSE->id]);
             $this->content->footer .= $OUTPUT->single_button($url, get_string('timespentreport', 'block_dedication'), 'get');
         }
 
