@@ -29,6 +29,7 @@ require_once($CFG->dirroot.'/grade/lib.php');
 
 use core_reportbuilder\system_report_factory;
 use block_dedication\local\systemreports\course;
+use block_dedication\lib\utils;
 
 $courseid = required_param('id', PARAM_INT);
 
@@ -67,7 +68,10 @@ if (!empty($lastupdated)) {
     echo html_writer::span(get_string('lastupdated', 'block_dedication',
         userdate($lastupdated, get_string('strftimedatetimeshort', 'core_langconfig'))), 'dimmed_text');
 }
-
+$sessionlimit = get_config('block_dedication', 'ignore_sessions_limit');
+if (!empty($sessionlimit)) {
+    echo html_writer::div(get_string('excludesessionslessthan', 'block_dedication', utils::format_dedication($sessionlimit)));
+}
 $report = system_report_factory::create(course::class, context_course::instance($courseid));
 
 echo $report->output();

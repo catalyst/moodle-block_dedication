@@ -23,7 +23,7 @@
 
 use block_dedication\form\admin_filter;
 use block_dedication\lib\manager;
-use block_dedication\lib\util;
+use block_dedication\lib\utils;
 
 require('../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
@@ -175,7 +175,10 @@ $mform->display();
 
 echo html_writer::div(get_string('totaltimespent', 'block_dedication', $totaldedication));
 echo html_writer::div(get_string('averagetimespent', 'block_dedication', $averagededication));
-
+$sessionlimit = get_config('block_dedication', 'ignore_sessions_limit');
+if (!empty($sessionlimit)) {
+    echo html_writer::div(get_string('excludesessionslessthan', 'block_dedication', utils::format_dedication($sessionlimit)));
+}
 
 // Download button.
 echo html_writer::start_tag('div', array('class' => 'download-dedication'));

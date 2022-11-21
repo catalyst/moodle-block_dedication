@@ -25,10 +25,10 @@
 defined('MOODLE_INTERNAL') || die();
 
 if ($ADMIN->fulltree) {
-    $settings->add(new admin_setting_configtext('block_dedication/ignore_sessions_limit',
+    $settings->add(new admin_setting_configduration('block_dedication/ignore_sessions_limit',
         new lang_string('ignore_sessions_limit', 'block_dedication'),
         new lang_string('ignore_sessions_limit_desc', 'block_dedication') ,
-        5, PARAM_INT)
+        2 * MINSECS, PARAM_INT)
     );
 
     $settings->add(new admin_setting_configduration('block_dedication/session_limit',

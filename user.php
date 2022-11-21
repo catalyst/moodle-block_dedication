@@ -29,6 +29,7 @@ require_once($CFG->dirroot.'/grade/lib.php');
 
 use core_reportbuilder\system_report_factory;
 use block_dedication\local\systemreports\userreport;
+use block_dedication\lib\utils;
 
 $courseid = required_param('id', PARAM_INT);
 $userid = required_param('userid', PARAM_INT);
@@ -59,7 +60,10 @@ if (!empty($lastupdated)) {
 $usercontext = context_user::instance($user->id);
 $headerinfo = array('heading' => fullname($user), 'user' => $user, 'usercontext' => $usercontext);
 echo $OUTPUT->context_header($headerinfo, 2);
-
+$sessionlimit = get_config('block_dedication', 'ignore_sessions_limit');
+if (!empty($sessionlimit)) {
+    echo html_writer::div(get_string('excludesessionslessthan', 'block_dedication', utils::format_dedication($sessionlimit)));
+}
 $report = system_report_factory::create(userreport::class, context_course::instance($courseid));
 
 echo $report->output();
