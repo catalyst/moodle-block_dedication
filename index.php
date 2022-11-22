@@ -63,15 +63,17 @@ $totaldedication = \block_dedication\lib\utils::format_dedication($totaldedicati
 echo $OUTPUT->heading(get_string('timespentincourse', 'block_dedication'));
 echo html_writer::div(get_string('totaltimespent', 'block_dedication', $totaldedication));
 echo html_writer::div(get_string('averagetimespent', 'block_dedication', $averagededication));
-$lastupdated = get_config('block_dedication', 'lastcalculated');
-if (!empty($lastupdated)) {
+$config = get_config('block_dedication');
+
+if (!empty($config->ignore_sessions_limit)) {
+    echo html_writer::div(get_string('excludesessionslessthan', 'block_dedication',
+                              utils::format_dedication($config->ignore_sessions_limit)));
+}
+if (!empty($config->lastcalculated)) {
     echo html_writer::span(get_string('lastupdated', 'block_dedication',
-        userdate($lastupdated, get_string('strftimedatetimeshort', 'core_langconfig'))), 'dimmed_text');
+        userdate($config->lastcalculated, get_string('strftimedatetimeshort', 'core_langconfig'))), 'dimmed_text');
 }
-$sessionlimit = get_config('block_dedication', 'ignore_sessions_limit');
-if (!empty($sessionlimit)) {
-    echo html_writer::div(get_string('excludesessionslessthan', 'block_dedication', utils::format_dedication($sessionlimit)));
-}
+
 $report = system_report_factory::create(course::class, context_course::instance($courseid));
 
 echo $report->output();
