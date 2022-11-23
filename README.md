@@ -11,17 +11,18 @@ Maintenance for this plugin has been taken over by Catalyst IT thanks to funding
 NOTE: This new version of the block differs from the original version in some significant ways:
 1. To unify global reporting across all courses, some settings previously set within the block are now "site-level" settings, instead of being able to customise at the course level within the block settings.
 2. Timespent information is now generated via a scheduled task - this improves general performance but also enables the data to be exposed within Moodle's new Report Builder custom reporting.
-3. Changing the site level settings (session_limit etc) does not recalculate existing records, this will be addressed in a future release - see issue #59.
-3. The first time this new version is installed, only the last 12 weeks of sessions usage is calculated - if you want to calculate further historical data see the CLI script in the CLI folder (requires server-level access to execute.).
-4. Users (students) can now see a link to a report that shows them a list of all ther sessions and estimated durations.
-5. Custom reportbuilder source is available for site-level reporting (under admin > reports > reportbuilder > custom reports).
-6. Course and user-level reporting now uses the reportbuilder api available in Moodle 4.0.
+3. The main course report uses Moodle's reportbuilder api, however this unfortunately drops the ability to filter the report based on the date as system level reportbuilder reports do not support aggregate values well (see MDL-76392) - You can still create a custom report within report-buidlers custom reports to do this and make it available for teachers to use.
+4. Changing the site level settings (session_limit etc) does not recalculate existing records, this will be addressed in a future release - see issue #59.
+5. The first time this new version is installed, only the last 12 weeks of sessions usage is calculated - if you want to calculate further historical data see the CLI script in the CLI folder (requires server-level access to execute.).
+6. Users (students) can now see a link to a report that shows them a list of all ther sessions and estimated durations.
+7. Custom reportbuilder source is available for site-level reporting (under admin > reports > reportbuilder > custom reports).
+8. Course and user-level reporting now uses the reportbuilder api available in Moodle 4.0.
 
 # Branches
 
 | Moodle version    | Branch             | Status |
 | ----------------- | ------------------ | ------------------ |
-| Moodle 4.0+       | `MOODLE_400_STABLE` | Work in progress |
+| Moodle 4.0+       | `MOODLE_400_STABLE` | Beta |
 | Moodle 3.0 - 3.11 | `MOODLE_30_STABLE` | Old unsupported branch - pull requests welcome |
 
 # How dedication time is estimated?
