@@ -69,6 +69,8 @@ class course extends system_report {
 
         $dedicationentity = new dedication();
         $dedicationalias = $dedicationentity->get_table_alias('block_dedication');
+        // Note: rather than joining normally, we have to do a subselect so we can get the SUM() aggregation.
+        // In future once MDL-76392 lands, we should be able to do this better.
         $dedicationentity->add_join("JOIN (
                                    SELECT SUM(timespent) as timespent, userid, courseid
                                      FROM {block_dedication} GROUP BY userid, courseid) {$dedicationalias} ON
@@ -127,7 +129,7 @@ class course extends system_report {
     protected function add_filters(): void {
         $filters = [
             'user:fullname',
-      //      'dedication:timestart',
+      //      'dedication:timestart', // We can't include a timestart filter yet due to aggregation limitations in system reports.
             'dedication:timespent',
         ];
 

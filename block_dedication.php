@@ -69,7 +69,7 @@ class block_dedication extends block_base {
             }
         }
         if (has_capability('block/dedication:viewreports', context_course::instance($COURSE->id))) {
-            $url = new moodle_url('/blocks/dedication/report.php', ['courseid' => $COURSE->id]);
+            $url = new moodle_url('/blocks/dedication/index.php', ['id' => $COURSE->id]);
             $this->content->footer .= html_writer::tag('p', html_writer::link($url,
                                                        get_string('timespentreport', 'block_dedication')));
         } else if ($showtimespent) {
