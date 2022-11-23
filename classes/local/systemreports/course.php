@@ -92,6 +92,12 @@ class course extends system_report {
             new moodle_url('/blocks/dedication/user.php', ['id' => $courserecord->id, 'userid' => ":userid"]),
             new pix_icon('i/search', get_string('viewsessiondurationreport', 'block_dedication')))));
 
+        if (has_capability('report/log:view', \context_course::instance($courserecord->id))) {
+            $this->add_action((new action(
+                new moodle_url('/report/log/user.php', ['id' => ":userid", 'course' => $courserecord->id, 'mode' => 'all']),
+                new pix_icon('i/search', get_string('alllogs')))));
+        }
+
         // Set if report can be downloaded.
         $this->set_downloadable(true);
     }
