@@ -15,16 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- *
+ * Utils class helper.
  * @package block_dedication
  * @copyright 2022 University of Canterbury
  * @author Pramith Dayananda <pramithd@catalyst.net.nz>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace block_dedication\lib;
-
+/**
+ * Utils helper class.
+ */
 class utils {
 
+    /**
+     * List of supported logstore plugins.
+     *
+     * @var array
+     */
     public static $logstores = array('logstore_standard');
 
     /**
@@ -123,23 +131,6 @@ class utils {
     }
 
     /**
-     * @param string[] $ips
-     * @return string
-     */
-    public static function format_ips($ips) {
-        return implode(', ', array_map('block_dedication_utils::link_ip', $ips));
-    }
-
-    /**
-     * Generates a linkable ip.
-     * @param string $ip
-     * @return string
-     */
-    public static function link_ip($ip) {
-        return \html_writer::link("http://en.utrace.de/?query=$ip", $ip, array('target' => '_blank'));
-    }
-
-    /**
      * Return table styles based on current theme.
      * @return array
      */
@@ -193,8 +184,12 @@ class utils {
         return $workbook;
     }
 
-    /** Generate stats and store in caching table
+    /**
+     * Generate stats
      *
+     * @param int $timestart
+     * @param int $timeend
+     * @return void
      */
     public static function generate_stats($timestart, $timeend) {
         if ($timeend - $timestart > WEEKSECS) {
@@ -210,6 +205,13 @@ class utils {
 
     }
 
+    /**
+     * Calculate stats
+     *
+     * @param int $timestart
+     * @param int $timeend
+     * @return void
+     */
     public static function calculate($timestart, $timeend) {
         global $DB;
         mtrace("calculating stats from: " . userdate($timestart) . " to:". userdate($timeend));

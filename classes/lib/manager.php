@@ -15,10 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Manager helper class.
  *
  * @package block_dedication
  * @copyright 2022 University of Canterbury
  * @author Pramith Dayananda <pramithd@catalyst.net.nz>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace block_dedication\lib;
 
@@ -29,11 +31,22 @@ use block_dedication\lib\utils;
  */
 class manager {
 
+    /** @var stdclass Course */
     protected $course;
+    /** @var int $mintime - unix timestamp. */
     protected $mintime;
+    /** @var int $maxtime - unix timestamp. */
     protected $maxtime;
+    /** @var int $limit - duration in seconds. */
     protected $limit;
 
+    /**
+     * Construtor.
+     *
+     * @param stdclass $course
+     * @param int $mintime
+     * @param int $maxtime
+     */
     public function __construct($course, $mintime = null, $maxtime = null) {
         $this->course = $course;
 
@@ -44,6 +57,13 @@ class manager {
         $this->limit = empty($limit) ? HOURSECS : $limit;
     }
 
+    /**
+     * Get dedication for a specific user.
+     *
+     * @param stdclass|int $user
+     * @param boolean $simple
+     * @return void
+     */
     public function get_user_dedication($user, $simple = false) {
         $config = get_config('block_dedication');
         if (is_numeric($user)) {

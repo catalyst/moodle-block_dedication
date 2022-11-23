@@ -15,29 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- *
+ * Admin filter form.
  * @package block_dedication
  * @copyright 2022 University of Canterbury
  * @author Pramith Dayananda <pramithd@catalyst.net.nz>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace block_dedication\form;
 
 defined('MOODLE_INTERNAL') || die();
 
-use coding_exception;
-use dml_exception;
 use html_writer;
-use moodle_exception;
 use moodleform;
-use stdClass;
 
 global $CFG, $DB;
 require_once($CFG->libdir . '/formslib.php');
 
 // Form to select start and end date ranges and session time.
+/**
+ * Admin filter form.
+ */
 class admin_filter extends moodleform {
 
+    /**
+     * Form definition.
+     */
     public function definition() {
 
         $mform = & $this->_form;

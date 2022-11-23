@@ -15,10 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- *
+ * Privacy api class.
  * @package block_dedication
  * @copyright 2022 University of Canterbury
  * @author Pramith Dayananda <pramithd@catalyst.net.nz>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace block_dedication\privacy;

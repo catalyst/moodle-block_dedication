@@ -28,14 +28,13 @@ use block_dedication\lib\utils;
 use core_reportbuilder\local\filters\duration;
 
 /**
- *
+ * Dedication entity
  * @package block_dedication
  * @copyright 2022 University of Canterbury
  * @author Pramith Dayananda <pramithd@catalyst.net.nz>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class dedication extends base {
-
 
     /**
      * Database tables that this entity uses and their default aliases

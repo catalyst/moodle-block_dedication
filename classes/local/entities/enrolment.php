@@ -35,7 +35,7 @@ use stdClass;
 /**
  * Course enrolment entity implementation - copied from 4.1 as we need to support 4.0 in this plugin.
  *
- * @package     core_course
+ * @package     block_dedication
  * @copyright   2022 David Matamoros <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

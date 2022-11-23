@@ -18,16 +18,19 @@ use block_dedication\lib\utils;
 /**
  * Dedication block definition.
  *
- * @package    block
- * @subpackage dedication
+ * @package    block_dedication
  * @copyright  2008 CICEI http://http://www.cicei.com
  * @author     2008 Borja Rubio Reyes
  *             2011 Aday Talavera Hierro (update to Moodle 2.x)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class block_dedication extends block_base {
 
+    /**
+     * Initialise.
+     *
+     * @return void
+     */
     public function init() {
         $this->title = get_string('pluginname', 'block_dedication');
     }
@@ -44,6 +47,11 @@ class block_dedication extends block_base {
         }
     }
 
+    /**
+     * Output block.
+     *
+     * @return stdclass
+     */
     public function get_content() {
         global $USER, $COURSE;
 
@@ -79,6 +87,11 @@ class block_dedication extends block_base {
         return $this->content;
     }
 
+    /**
+     * Page types that can add this block.
+     *
+     * @return array
+     */
     public function applicable_formats() {
         return ['admin' => false,
                 'site-index' => false,

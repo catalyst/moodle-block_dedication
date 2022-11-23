@@ -14,8 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Block editing form.
+ * @package block_dedication
+ * @copyright 2022 University of Canterbury
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class block_dedication_edit_form extends block_edit_form {
 
+    /**
+     * Custom settings for block.
+     *
+     * @param mform $mform
+     * @return void
+     */
     protected function specific_definition($mform) {
 
         $mform->addElement('header', 'configheader', get_string('blocksettings', 'block'));
