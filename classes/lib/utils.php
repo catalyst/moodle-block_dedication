@@ -295,6 +295,7 @@ class utils {
     public static function get_average($courseid, $since = null) {
         global $DB;
         $params = ['courseid' => $courseid];
+        $sqlextra = '';
         if (!empty($since)) {
             $sqlextra = " AND timestart > :since";
             $params['since'] = $since;
