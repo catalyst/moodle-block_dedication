@@ -48,21 +48,12 @@ $PAGE->set_title("$course->fullname: ".get_string('sessionduration', 'block_dedi
 $PAGE->set_heading($course->fullname);
 
 echo $OUTPUT->header();
-$totaldedication = $DB->get_field_sql("SELECT SUM(timespent)
-                                         FROM {block_dedication}
-                                        WHERE courseid = ?",
-                                      ['courseid' => $courseid]);
-$totalusers = $DB->get_field_sql("SELECT count(DISTINCT userid)
-                                    FROM {block_dedication}
-                                   WHERE courseid = ?",
-                                ['courseid' => $courseid]);
-
-$averagededication = \block_dedication\lib\utils::format_dedication(!empty($totalusers) ? $totaldedication / $totalusers : 0);
-$totaldedication = \block_dedication\lib\utils::format_dedication($totaldedication);
+$average = \block_dedication\lib\utils::get_average($course->id);
 
 echo $OUTPUT->heading(get_string('timespentincourse', 'block_dedication'));
-echo html_writer::div(get_string('totaltimespent', 'block_dedication', $totaldedication));
-echo html_writer::div(get_string('averagetimespent', 'block_dedication', $averagededication));
+echo html_writer::div(get_string('totaltimespent', 'block_dedication', $average['total']));
+echo html_writer::div(get_string('averagetimespent', 'block_dedication', $average['average']));
+
 $config = get_config('block_dedication');
 
 if (!empty($config->ignore_sessions_limit)) {

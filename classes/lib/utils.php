@@ -284,4 +284,32 @@ class utils {
             return self::format_dedication($totaldedication);
         }
     }
+
+    /**
+     * Calculate averages and totals for timespent in course.
+     *
+     * @param int $courseid
+     * @param int $since
+     * @return void
+     */
+    public static function get_average($courseid, $since = null) {
+        global $DB;
+        $params = ['courseid' => $courseid];
+        if (!empty($since)) {
+            $sqlextra = " AND timestart > :since";
+            $params['since'] = $since;
+        }
+
+        $sqltotal = "SELECT SUM(timespent)
+                       FROM {block_dedication}
+                      WHERE courseid = :courseid". $sqlextra;
+        $sqlusers = "SELECT count(DISTINCT userid)
+                       FROM {block_dedication}
+                      WHERE courseid = :courseid". $sqlextra;
+        $totaldedication = $DB->get_field_sql($sqltotal, $params);
+        $totalusers = $DB->get_field_sql($sqlusers, $params);
+
+        return ['total' => self::format_dedication($totaldedication),
+                'average' => self::format_dedication(!empty($totalusers) ? $totaldedication / $totalusers : 0)];
+    }
 }
