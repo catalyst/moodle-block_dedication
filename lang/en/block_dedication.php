@@ -83,5 +83,5 @@ $string['cleanuptask'] = 'Session history cleanup task';
 $string['allloglifetime'] = 'Keep session history for';
 $string['configallloglifetime'] = 'This specifies the length of time you want to keep data about session duration. Sessions that are older than this age are automatically deleted.';
 $string['excludesessionslessthan'] = 'Excludes sessions less than {$a}';
-$string['viewdetailedreport'] = 'View detailed report';
+$string['viewsessiondurationreport'] = 'View session duration report';
 $string['sessiondurationsum'] = 'Session duration (sum)';

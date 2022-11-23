@@ -90,7 +90,7 @@ class course extends system_report {
         // Action to download individual task log.
         $this->add_action((new action(
             new moodle_url('/blocks/dedication/user.php', ['id' => $courserecord->id, 'userid' => ":userid"]),
-            new pix_icon('i/search', get_string('viewdetailedreport', 'block_dedication')))));
+            new pix_icon('i/search', get_string('viewsessiondurationreport', 'block_dedication')))));
 
         // Set if report can be downloaded.
         $this->set_downloadable(true);
