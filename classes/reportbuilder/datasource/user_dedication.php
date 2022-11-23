@@ -34,7 +34,7 @@ use block_dedication\local\entities\dedication;
 
 class user_dedication extends datasource {
 
-     /**
+    /**
      * Return user friendly name of the datasource
      *
      * @return string
@@ -62,7 +62,6 @@ class user_dedication extends datasource {
         $coursecorealias = $coursecore->get_table_alias('course');
         $coursecorejoin = "JOIN {course} {$coursecorealias} ON {$coursecorealias}.id = {$dedicationalias}.courseid";
         $this->add_entity($coursecore->add_join($coursecorejoin));
-
 
         $this->add_columns_from_entity($usercore->get_entity_name());
         $this->add_columns_from_entity($coursecore->get_entity_name());

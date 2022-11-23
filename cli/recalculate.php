@@ -76,7 +76,8 @@ if ($options['truncate']) {
 // Sanity check to make sure data doesn't exist between the values.
 $sqlwhere = "timestart > ? AND timestart < ?";
 if ($DB->record_exists_select('block_dedication', $sqlwhere, [$start, $end])) {
-    echo "Data already exists within the timeframe specified, you cannot import this as it may generate duplicate data - try with truncate if you want to delete existing data";
+    echo "Data already exists within the timeframe specified, you cannot import this as it may generate duplicate data ".
+         "- try with truncate if you want to delete existing data";
     cli_heading(get_string('error'));
     exit(1);
 }

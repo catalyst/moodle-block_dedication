@@ -21,13 +21,12 @@
  * @author Pramith Dayananda <pramithd@catalyst.net.nz>
  */
 namespace block_dedication\lib;
-defined('MOODLE_INTERNAL') || die();
+
+use block_dedication\lib\utils;
 
 /**
  * Generate dedication reports based in passed params.
  */
-use block_dedication\lib\utils;
-
 class manager {
 
     protected $course;
@@ -100,7 +99,7 @@ class manager {
 
                         // Ignore sessions with a really short duration.
                         if ($dedication > $config->ignore_sessions_limit) {
-                            $rows[] = (object) array('start_date' => $sessionstart, 'dedicationtime' => $dedication, 'ips' => array_keys($ips));
+                            $rows[] = (object) array('start_date' => $sessionstart, 'dedicationtime' => $dedication);
                             $ips = array();
                         }
                         $sessionstart = $log->time;
@@ -113,7 +112,7 @@ class manager {
 
                 // Ignore sessions with a really short duration.
                 if ($dedication > $config->ignore_sessions_limit) {
-                    $rows[] = (object) array('start_date' => $sessionstart, 'dedicationtime' => $dedication, 'ips' => array_keys($ips));
+                    $rows[] = (object) array('start_date' => $sessionstart, 'dedicationtime' => $dedication);
                 }
             }
 

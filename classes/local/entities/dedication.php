@@ -50,7 +50,7 @@ class dedication extends base {
         ];
     }
 
-        /**
+    /**
      * The default title for this entity
      *
      * @return lang_string

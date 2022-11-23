@@ -40,7 +40,6 @@ class admin_filter extends moodleform {
 
     public function definition() {
 
-        
         $mform = & $this->_form;
 
         $courseoptions = array();

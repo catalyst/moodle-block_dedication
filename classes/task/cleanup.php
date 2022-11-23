@@ -23,10 +23,6 @@
 
 namespace block_dedication\task;
 
-use context_system;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Scheduled task to delete logs with origin cli and restore.
  */

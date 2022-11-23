@@ -23,8 +23,6 @@
 
 namespace block_dedication\lib;
 
-defined('MOODLE_INTERNAL') || die();
-
 class utils {
 
     public static $logstores = array('logstore_standard');
@@ -149,8 +147,9 @@ class utils {
         global $PAGE;
 
         // Twitter Bootstrap styling.
-        $is_bootstrap_theme = ($PAGE->theme->name === 'boost') || count(array_intersect(array('boost', 'bootstrapbase'), $PAGE->theme->parents)) > 0;
-        if ($is_bootstrap_theme) {
+        $isbootstrap = ($PAGE->theme->name === 'boost') ||
+                        count(array_intersect(array('boost', 'bootstrapbase'), $PAGE->theme->parents)) > 0;
+        if ($isbootstrap) {
             $styles = array(
                 'table_class' => 'table table-bordered table-hover table-sm table-condensed table-dedication',
                 'header_style' => 'background-color: #333; color: #fff;'
@@ -214,7 +213,7 @@ class utils {
     public static function calculate($timestart, $timeend) {
         global $DB;
         mtrace("calculating stats from: " . userdate($timestart) . " to:". userdate($timeend));
-        // TODO: accessing logs data uses the log store reader classes - we should look at converting this to do something similar if possible.
+        // TODO: accessing logs data uses the log store reader classes - we should look at converting this to do something similar.
         // Get list of courses and users we want to calculate for.
         $sql = "SELECT distinct ". $DB->sql_concat_join("':'", ['courseid', 'userid'])." as tmpid, courseid, userid
                   FROM {logstore_standard_log}

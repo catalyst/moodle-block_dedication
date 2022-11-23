@@ -129,7 +129,6 @@ class course extends system_report {
     protected function add_filters(): void {
         $filters = [
             'user:fullname',
-      //      'dedication:timestart', // We can't include a timestart filter yet due to aggregation limitations in system reports.
             'dedication:timespent',
         ];
 
