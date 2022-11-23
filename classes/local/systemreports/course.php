@@ -67,18 +67,15 @@ class course extends system_report {
 
         $this->add_base_fields("{$user}.id as userid");
 
-//        $this->add_columns_from_entity($enrolmententity->get_entity_name());
+        $dedicationentity = new dedication();
+        $dedicationalias = $dedicationentity->get_table_alias('block_dedication');
+        $dedicationentity->add_join("JOIN (
+                                   SELECT SUM(timespent) as timespent, userid, courseid
+                                     FROM {block_dedication} GROUP BY userid, courseid) {$dedicationalias} ON
+                                          {$dedicationalias}.userid = {$user}.id and {$dedicationalias}.courseid = {$course}.id");
+        $this->add_entity($dedicationentity);
 
-        /*// Our main entity, it contains all of the column definitions that we need.
-        $entitymain = new dedication();
-        $entitymainalias = $entitymain->get_table_alias('block_dedication');
-
-        $this->set_main_table('block_dedication', $entitymainalias);
-        $this->add_entity($entitymain);
-
-*/
         $param1 = database::generate_param_name();
-
         $wheresql = "$course.id = :$param1";
 
         $this->add_base_condition_sql($wheresql,
@@ -91,7 +88,7 @@ class course extends system_report {
         // Action to download individual task log.
         $this->add_action((new action(
             new moodle_url('/blocks/dedication/user.php', ['id' => $courserecord->id, 'userid' => ":userid"]),
-            new pix_icon('i/search', get_string('view')))));
+            new pix_icon('i/search', get_string('viewdetailedreport', 'block_dedication')))));
 
         // Set if report can be downloaded.
         $this->set_downloadable(true);
@@ -115,7 +112,7 @@ class course extends system_report {
     public function add_columns(): void {
         $columns = [
             'user:fullnamewithpicturelink',
-           // 'dedication:timespent',
+            'dedication:timespent',
         ];
 
         $this->add_columns_from_entities($columns);
@@ -130,8 +127,8 @@ class course extends system_report {
     protected function add_filters(): void {
         $filters = [
             'user:fullname',
-        //    'dedication:timestart',
-        //    'dedication:timespent',
+      //      'dedication:timestart',
+            'dedication:timespent',
         ];
 
         $this->add_filters_from_entities($filters);
