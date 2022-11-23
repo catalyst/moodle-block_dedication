@@ -290,7 +290,7 @@ class utils {
      *
      * @param int $courseid
      * @param int $since
-     * @return void
+     * @return array
      */
     public static function get_average($courseid, $since = null) {
         global $DB;
