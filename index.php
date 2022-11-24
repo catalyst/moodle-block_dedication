@@ -40,7 +40,7 @@ require_login($course);
 $context = context_course::instance($course->id);
 require_capability('block/dedication:viewreports', $context);
 
-$PAGE->set_url('/block/dedication/index.php', ['id' => $courseid]);
+$PAGE->set_url('/blocks/dedication/index.php', ['id' => $courseid]);
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('report');
 $PAGE->add_body_class('limitedwidth');

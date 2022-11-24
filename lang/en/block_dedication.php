@@ -85,3 +85,5 @@ $string['configallloglifetime'] = 'This specifies the length of time you want to
 $string['excludesessionslessthan'] = 'Excludes sessions less than {$a}';
 $string['viewsessiondurationreport'] = 'View session duration report';
 $string['sessiondurationsum'] = 'Session duration (sum)';
+$string['enrolmententity'] = 'Enrolment';
+$string['enrolmentmethod'] = 'Enrolment method';

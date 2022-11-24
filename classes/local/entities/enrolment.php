@@ -19,16 +19,12 @@ declare(strict_types=1);
 namespace block_dedication\local\entities;
 
 use context_course;
-use core_course\reportbuilder\local\formatters\enrolment as enrolment_formatter;
 use core_reportbuilder\local\entities\base;
-use core_reportbuilder\local\filters\date;
-use core_reportbuilder\local\filters\select;
 use core_reportbuilder\local\helpers\database;
 use core_reportbuilder\local\helpers\format;
 use core_reportbuilder\local\report\column;
 use core_reportbuilder\local\report\filter;
 use core_user\output\status_field;
-use enrol_plugin;
 use lang_string;
 use stdClass;
 
@@ -56,7 +52,7 @@ class enrolment extends base {
      * @return lang_string
      */
     protected function get_default_entity_title(): lang_string {
-        return new lang_string('enrolment', 'enrol');
+        return new lang_string('enrolmententity', 'block_dedication');
     }
 
     /**
@@ -91,14 +87,13 @@ class enrolment extends base {
         // Enrolment method column.
         $columns[] = (new column(
             'method',
-            new lang_string('method', 'enrol'),
+            new lang_string('enrolmentmethod', 'block_dedication'),
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
             ->add_fields("{$enrol}.enrol, {$enrol}.id")
-            ->set_is_sortable(true)
-            ->add_callback([enrolment_formatter::class, 'enrolment_name']);
+            ->set_is_sortable(true);
 
         // Enrolment time created.
         $columns[] = (new column(
@@ -112,34 +107,6 @@ class enrolment extends base {
             ->set_is_sortable(true)
             ->add_callback([format::class, 'userdate']);
 
-        // Enrolment time started.
-        $columns[] = (new column(
-            'timestarted',
-            new lang_string('timestarted', 'enrol'),
-            $this->get_entity_name()
-        ))
-            ->add_joins($this->get_joins())
-            ->set_type(column::TYPE_TIMESTAMP)
-            ->add_field("
-                CASE WHEN {$userenrolments}.timestart = 0
-                     THEN {$userenrolments}.timecreated
-                     ELSE {$userenrolments}.timestart
-                 END", 'timestarted')
-            ->set_is_sortable(true)
-            ->add_callback([format::class, 'userdate']);
-
-        // Enrolment time ended.
-        $columns[] = (new column(
-            'timeended',
-            new lang_string('timeended', 'enrol'),
-            $this->get_entity_name()
-        ))
-            ->add_joins($this->get_joins())
-            ->set_type(column::TYPE_TIMESTAMP)
-            ->add_field("{$userenrolments}.timeend")
-            ->set_is_sortable(true)
-            ->add_callback([format::class, 'userdate']);
-
         // Enrolment status.
         $columns[] = (new column(
             'status',
@@ -150,8 +117,7 @@ class enrolment extends base {
             ->set_type(column::TYPE_TEXT)
             ->add_field($this->get_status_field_sql(), 'status')
             ->add_field("{$userenrolments}.userid")
-            ->set_is_sortable(true)
-            ->add_callback([enrolment_formatter::class, 'enrolment_status']);
+            ->set_is_sortable(true);
 
         // Role method column.
         $ctx = database::generate_alias();
@@ -210,93 +176,6 @@ class enrolment extends base {
      * @return filter[]
      */
     protected function get_all_filters(): array {
-        $userenrolments = $this->get_table_alias('user_enrolments');
-        $enrol = $this->get_table_alias('enrol');
-
-        // Enrolment method.
-        $enrolmentmethods = static function(): array {
-            return array_map(static function(enrol_plugin $plugin): string {
-                return get_string('pluginname', 'enrol_' . $plugin->get_name());
-            }, enrol_get_plugins(true));
-        };
-        $filters[] = (new filter(
-            select::class,
-            'method',
-            new lang_string('method', 'enrol'),
-            $this->get_entity_name(),
-            "{$enrol}.enrol"
-        ))
-            ->add_joins($this->get_joins())
-            ->set_options_callback($enrolmentmethods);
-
-        // Enrolment time created.
-        $filters[] = (new filter(
-            date::class,
-            'timecreated',
-            new lang_string('timecreated', 'moodle'),
-            $this->get_entity_name(),
-            "{$userenrolments}.timecreated"
-        ))
-            ->add_joins($this->get_joins())
-            ->set_limited_operators([
-                date::DATE_ANY,
-                date::DATE_NOT_EMPTY,
-                date::DATE_EMPTY,
-                date::DATE_RANGE,
-                date::DATE_LAST,
-                date::DATE_CURRENT,
-            ]);
-
-        // Enrolment time started.
-        $filters[] = (new filter(
-            date::class,
-            'timestarted',
-            new lang_string('timestarted', 'enrol'),
-            $this->get_entity_name(),
-            "CASE WHEN {$userenrolments}.timestart = 0
-                          THEN {$userenrolments}.timecreated
-                          ELSE {$userenrolments}.timestart
-                      END"
-        ))
-            ->add_joins($this->get_joins())
-            ->set_limited_operators([
-                date::DATE_ANY,
-                date::DATE_NOT_EMPTY,
-                date::DATE_EMPTY,
-                date::DATE_RANGE,
-                date::DATE_LAST,
-                date::DATE_CURRENT,
-            ]);
-
-        // Enrolment time ended.
-        $filters[] = (new filter(
-            date::class,
-            'timeended',
-            new lang_string('timeended', 'enrol'),
-            $this->get_entity_name(),
-            "{$userenrolments}.timeend"
-        ))
-            ->add_joins($this->get_joins())
-            ->set_limited_operators([
-                date::DATE_ANY,
-                date::DATE_NOT_EMPTY,
-                date::DATE_EMPTY,
-                date::DATE_RANGE,
-                date::DATE_LAST,
-                date::DATE_CURRENT,
-            ]);
-
-        // Enrolment status.
-        $filters[] = (new filter(
-            select::class,
-            'status',
-            new lang_string('status', 'moodle'),
-            $this->get_entity_name(),
-            $this->get_status_field_sql()
-        ))
-            ->add_joins($this->get_joins())
-            ->set_options(enrolment_formatter::enrolment_values());
-
-        return $filters;
+        return [];
     }
 }

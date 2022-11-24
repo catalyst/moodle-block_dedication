@@ -61,7 +61,7 @@ class course extends system_report {
         // Join user entity.
         $userentity = new user();
         $user = $userentity->get_table_alias('user');
-        $userentity->add_joins($enrolmententity->get_joins());
+        $userentity->add_joins([$enroljoin, $userenrolmentjoin]);
         $userentity->add_join("LEFT JOIN {user} {$user} ON {$userenrolment}.userid = {$user}.id AND {$user}.deleted = 0");
         $this->add_entity($userentity);
 
