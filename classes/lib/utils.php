@@ -289,16 +289,16 @@ class utils {
      * Calculate averages and totals for timespent in course.
      *
      * @param int $courseid
-     * @param int $since
+     * @param int $duration
      * @return array
      */
-    public static function get_average($courseid, $since = null) {
+    public static function get_average($courseid, $duration = null) {
         global $DB;
         $params = ['courseid' => $courseid];
         $sqlextra = '';
-        if (!empty($since)) {
+        if (!empty($duration)) {
             $sqlextra = " AND timestart > :since";
-            $params['since'] = $since;
+            $params['since'] = time() - $duration;
         }
 
         $sqltotal = "SELECT SUM(timespent)
