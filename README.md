@@ -9,7 +9,7 @@ Maintenance for this plugin has been taken over by Catalyst IT thanks to funding
 ## This is Work in Progress code under development - use at your own risk, see some of the open issues in the tracker for known issues.
 
 NOTE: This new version of the block differs from the original version in some significant ways:
-1. To unify global reporting across all courses, some settings previously set within the block are now "site-level" settings, instead of being able to customise at the course level within the block settings.
+1. To unify global reporting across all courses, you can no longer set the minimum session limit within the block and can only set this in the site-level settings - this fixes various inconsistency issues previously reported and makes it clearer what the setting actually does. The site-level session limit is also exposed to teachers in the reporting pages via the text "Excludes sessions less than X".
 2. Timespent information is now generated via a scheduled task - this improves general performance but also enables the data to be exposed within Moodle's new Report Builder custom reporting.
 3. The main course report uses Moodle's reportbuilder api, however this unfortunately drops the ability to filter the report based on the date as system level reportbuilder reports do not support aggregate values well (see MDL-76392) - You can still create a custom report within report-buidlers custom reports to do this and make it available for teachers to use.
 4. Changing the site level settings (session_limit etc) does not recalculate existing records, this will be addressed in a future release - see issue #59.
