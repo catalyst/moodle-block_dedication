@@ -67,25 +67,20 @@ class provider implements
         if (!$context instanceof context_block) {
             return;
         }
-        $sql = "SELECT UNIQUE(userid) FROM {block_dedication}";
+        $sql = "SELECT DISTINCT(userid) FROM {block_dedication}";
         $userlist->add_from_sql('userid', $sql, []);
     }
 
     /**
-     * Delete multiple users within a single context.
+     * Delete users' dedication items.
      *
-     * @param approved_userlist $userlist The approved context and user information to delete information for.
+     * @param approved_userlist $userlist
+     * @return void
      */
     public static function delete_data_for_users(approved_userlist $userlist) {
         global $DB;
-        $context = $userlist->get_context();
-        if (!$context instanceof context_block) {
-            return;
-        }
-
         $userids = $userlist->get_userids();
         list($insql, $inparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
-
         $DB->delete_records_select('block_dedication', "userid $insql", $inparams);
     }
 
@@ -117,13 +112,9 @@ class provider implements
      * @param context $context Context to delete data from.
      */
     public static function delete_data_for_all_users_in_context(\context $context) {
-        if (!$context instanceof context_block) {
-            return;
-        }
-
-        // The only way to delete data for the html block is to delete the block instance itself.
-        if ($blockinstance = static::get_instance_from_context($context)) {
-            blocks_delete_instance($blockinstance);
+        global $DB;
+        if ($context instanceof \context_course) {
+            $DB->delete_records('block_dedication', ['courseid' => $context->instanceid]);
         }
     }
 
@@ -134,16 +125,14 @@ class provider implements
      */
     public static function delete_data_for_user(approved_contextlist $contextlist) {
         global $DB;
-        $userid = (int) $contextlist->get_user()->id;
-        $params = ['userid' => $userid];
-        $contextids = $contextlist->get_contextids();
-        list($insql, $inparams) = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED);
-
-        $DB->delete_records_select(
-            'block_dedication',
-            "userid = :userid AND (id $insql)",
-            $inparams + $params
-        );
+        $userid = $contextlist->get_user()->id;
+        foreach ($contextlist as $context) {
+            if ($context instanceof \context_user) {
+                $DB->delete_records('block_dedication', ['userid' => $userid]);
+            } else if ($context instanceof \context_course) {
+                $DB->delete_records('block_dedication', ['userid' => $userid, 'courseid' => $context->instanceid]);
+            }
+        }
     }
 
     /**
