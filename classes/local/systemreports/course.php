@@ -16,12 +16,11 @@
 
 namespace block_dedication\local\systemreports;
 
-use block_dedication\local\entities\dedication;
-use block_dedication\local\entities\enrolment;
+use block_dedication\local\entities\{dedication, enrolment, groups};
 use core_reportbuilder\local\helpers\database;
-use core_reportbuilder\system_report;
 use core_reportbuilder\local\entities\user;
 use core_reportbuilder\local\report\action;
+use core_reportbuilder\system_report;
 use moodle_url;
 use pix_icon;
 
@@ -38,7 +37,7 @@ class course extends system_report {
      * Initialise report, we need to set the main table, load our entities and set columns/filters
      */
     protected function initialise(): void {
-        global $PAGE;
+        global $DB, $PAGE;
 
         $courseentity = new \core_reportbuilder\local\entities\course();
         $course = $courseentity->get_table_alias('course');
@@ -76,6 +75,20 @@ class course extends system_report {
                                      FROM {block_dedication} GROUP BY userid, courseid) {$dedicationalias} ON
                                           {$dedicationalias}.userid = {$user}.id and {$dedicationalias}.courseid = {$course}.id");
         $this->add_entity($dedicationentity);
+
+        $groupidssql = $DB->sql_group_concat('gm.groupid', ',');
+        $groupidssql = $DB->sql_concat("','", $groupidssql, "','");
+
+        $groups = new groups();
+        $groupsalias = $groups->get_table_alias('groups');
+        $groupsjoin  = "LEFT JOIN (
+                            SELECT gm.userid, gr.courseid, $groupidssql groupids
+                            FROM {groups_members} gm
+                            JOIN {groups} gr ON gr.id = gm.groupid
+                            GROUP BY gm.userid, gr.courseid
+                        ) $groupsalias
+                        ON $groupsalias.userid = {$user}.id AND $groupsalias.courseid = {$course}.id";
+        $this->add_entity($groups->add_join($groupsjoin));
 
         $param1 = database::generate_param_name();
         $wheresql = "$course.id = :$param1";
@@ -136,6 +149,7 @@ class course extends system_report {
         $filters = [
             'user:fullname',
             'dedication:timespent',
+            'groups:group',
         ];
 
         $this->add_filters_from_entities($filters);
