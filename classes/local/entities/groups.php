@@ -67,6 +67,15 @@ class groups extends base {
     }
 
     /**
+     * Add extra columns to course report.
+     * @return array
+     * @throws \coding_exception
+     */
+    protected function get_all_columns(): array {
+        return [];
+    }
+
+    /**
      * Return list of all available filters
      *
      * @return filter[]
@@ -84,10 +93,12 @@ class groups extends base {
         ))
             ->add_joins($this->get_joins())
             ->set_options_callback(static function(): array {
-                global $DB, $PAGE;
-                $courseid = $PAGE->context->instanceid;
-                $condition = $courseid !== -1 ? ['courseid' => $courseid] : null;
-                $groups = $DB->get_records('groups', $condition, 'name', 'id, name');
+                global $PAGE, $USER;
+                if ($PAGE->course->groupmode == VISIBLEGROUPS || has_capability('moodle/site:accessallgroups', $PAGE->context)) {
+                    $groups = groups_get_all_groups($PAGE->course->id, 0, $PAGE->course->defaultgroupingid);
+                } else {
+                    $groups = groups_get_all_groups($PAGE->course->id, $USER->id, $PAGE->course->defaultgroupingid);
+                }
                 $grouplist = [];
                 foreach ($groups as $group) {
                     $grouplist[$group->id] = $group->name;
