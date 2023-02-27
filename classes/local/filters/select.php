@@ -22,7 +22,11 @@ use core_reportbuilder\local\helpers\database;
 use core_reportbuilder\local\filters\select as core_select;
 
 /**
- * Select report filter, slightly altered for block_dedication
+ * Select report filter
+ *
+ * This filter has been adapted to match within a string, as opposed to core_select which matches the whole string.
+ * block_dedication needs this for its group filter. Students can belong to multiple groups in a course, and the groups column
+ * values look generally like ",groupid1,groupid2,groupid3,".
  *
  * @package     block_dedication
  * @copyright   2022 Michael Kotlyar <michael.kotlyar@catalyst.net.nz>
@@ -33,11 +37,9 @@ class select extends core_select {
     /**
      * Return filter SQL
      *
-     * Note that operators must be of type integer, while values can be integer or string.
+     * Modified to filter with SQL LIKE in string arrays.
      *
-     * Modified to search "array"s of values in a column string value.
-     *
-     * @param array $values
+     * @param array $values Must be delimited with a comma and also must start and end with a comma. E.g. [",val1,val2,val3,", ...]
      * @return array array of two elements - SQL query and named parameters
      */
     public function get_sql_filter(array $values): array {
