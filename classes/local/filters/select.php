@@ -24,9 +24,11 @@ use core_reportbuilder\local\filters\select as core_select;
 /**
  * Select report filter
  *
+ * System level reports do not support aggregation (MDL-76392) so we have to manually aggregate the data,
  * This filter has been adapted to match within a string, as opposed to core_select which matches the whole string.
  * block_dedication needs this for its group filter. Students can belong to multiple groups in a course, and the groups column
  * values look generally like ",groupid1,groupid2,groupid3,".
+ * When MDL-76392 is fixed, we can probably revisit and delete this.
  *
  * @package     block_dedication
  * @copyright   2022 Michael Kotlyar <michael.kotlyar@catalyst.net.nz>

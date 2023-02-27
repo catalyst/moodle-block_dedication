@@ -81,6 +81,7 @@ class course extends system_report {
 
         $groups = new groups();
         $groupsalias = $groups->get_table_alias('groups');
+        // This is ugly mainly because system level reports do not support Aggregation (MDL-76392).
         $groupsjoin  = "LEFT JOIN (
                             SELECT gm.userid, gr.courseid, $groupidssql groupids
                             FROM {groups_members} gm
