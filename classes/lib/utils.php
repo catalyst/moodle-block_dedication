@@ -122,7 +122,11 @@ class utils {
             return trim($ohours . ' ' . $omins);
         }
         if ($mins) {
-            return trim($omins . ' ' . $osecs);
+            if ($mins < 15) { // If less than 15min, show seconds value as well as minutes.
+                return trim($omins . ' ' . $osecs);
+            } else { // If over 15min, just display a minute value.
+                return trim($omins);
+            }
         }
         if ($secs) {
             return $osecs;
