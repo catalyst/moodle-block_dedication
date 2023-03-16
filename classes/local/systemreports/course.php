@@ -37,7 +37,7 @@ class course extends system_report {
      * Initialise report, we need to set the main table, load our entities and set columns/filters
      */
     protected function initialise(): void {
-        global $DB, $PAGE;
+        global $DB, $PAGE, $USER;
 
         $courseentity = new \core_reportbuilder\local\entities\course();
         $course = $courseentity->get_table_alias('course');
@@ -76,20 +76,41 @@ class course extends system_report {
                                           {$dedicationalias}.userid = {$user}.id and {$dedicationalias}.courseid = {$course}.id");
         $this->add_entity($dedicationentity);
 
+        $groupnamesssql = $DB->sql_group_concat('gr.name', ', ');
+
         $groupidssql = $DB->sql_group_concat('gm.groupid', ',');
         $groupidssql = $DB->sql_concat("','", $groupidssql, "','");
 
-        $groups = new groups();
-        $groupsalias = $groups->get_table_alias('groups');
-        // This is ugly mainly because system level reports do not support Aggregation (MDL-76392).
-        $groupsjoin  = "LEFT JOIN (
-                            SELECT gm.userid, gr.courseid, $groupidssql groupids
+        $groupsentity = new groups();
+        $groupsalias = $groupsentity->get_table_alias('groups');
+
+        if ($PAGE->course->groupmode == VISIBLEGROUPS || has_capability('moodle/site:accessallgroups', $PAGE->context)) {
+            $visiblegroups = groups_get_all_groups($PAGE->course->id, 0, $PAGE->course->defaultgroupingid, 'g.id');
+        } else {
+            $visiblegroups = groups_get_all_groups($PAGE->course->id, $USER->id, $PAGE->course->defaultgroupingid, 'g.id');
+        }
+
+        if (!empty($visiblegroups)) {
+            $vglikesql = '(';
+            foreach ($visiblegroups as $vg) {
+                $vglikesql .= $vg->id . ',';
+            }
+            $vglikesql = substr($vglikesql, 0, -1) . ')';
+            $vglikesql = "AND gm.groupid IN $vglikesql";
+        } else {
+            $vglikesql = '';
+        }
+
+        $groupsentity->add_join("LEFT JOIN (
+                            SELECT gm.userid, gr.courseid, $groupidssql groupids, $groupnamesssql groupnames
                             FROM {groups_members} gm
                             JOIN {groups} gr ON gr.id = gm.groupid
+                            $vglikesql
                             GROUP BY gm.userid, gr.courseid
                         ) $groupsalias
-                        ON $groupsalias.userid = {$user}.id AND $groupsalias.courseid = {$course}.id";
-        $this->add_entity($groups->add_join($groupsjoin));
+                        ON $groupsalias.userid = {$user}.id AND $groupsalias.courseid = {$course}.id");
+
+        $this->add_entity($groupsentity);
 
         $param1 = database::generate_param_name();
         $wheresql = "$course.id = :$param1";
@@ -134,6 +155,7 @@ class course extends system_report {
     public function add_columns(): void {
         $columns = [
             'user:fullnamewithpicturelink',
+            'groups:groupnames',
             'dedication:timespent',
         ];
 

@@ -20,7 +20,7 @@ namespace block_dedication\local\entities;
 
 use block_dedication\local\filters\select;
 use core_reportbuilder\local\entities\base;
-use core_reportbuilder\local\report\filter;
+use core_reportbuilder\local\report\{column, filter};
 use lang_string;
 
 /**
@@ -56,6 +56,10 @@ class groups extends base {
      * @return base
      */
     public function initialise(): base {
+        foreach ($this->get_all_columns() as $column) {
+            $this->add_column($column);
+        }
+
         // All the filters defined by the entity can also be used as conditions.
         foreach ($this->get_all_filters() as $filter) {
             $this
@@ -72,7 +76,18 @@ class groups extends base {
      * @throws \coding_exception
      */
     protected function get_all_columns(): array {
-        return [];
+        $groups = $this->get_table_alias('groups');
+
+        $columns[] = (new column(
+            'groupnames',
+            new lang_string('group', 'block_dedication'),
+            $this->get_entity_name()
+        ))
+            ->add_joins($this->get_joins())
+            ->set_type(column::TYPE_TEXT)
+            ->add_fields("{$groups}.groupnames");
+
+        return $columns;
     }
 
     /**
