@@ -85,6 +85,9 @@ class utils {
      * @return string
      */
     public static function format_dedication($totalsecs) {
+        if (empty($totalsecs)) {
+            return get_string('none');
+        }
         $totalsecs = abs($totalsecs);
 
         $str = new \stdClass();

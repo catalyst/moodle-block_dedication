@@ -58,11 +58,20 @@ class block_dedication extends block_base {
         if ($this->content !== null) {
             return $this->content;
         }
-        $showtimespent = empty($this->config->show_dedication) ? false : true;
+
         $this->content = new stdClass();
         $this->content->text = '';
         $this->content->footer = '';
 
+        $lastruntime = get_config('block_dedication', 'lastcalculated');
+        if (empty($lastruntime)) {
+            $this->content->text = html_writer::tag('p', get_string('timespenttasknotrunning', 'block_dedication'), ['class' => 'warning']);
+            return $this->content;
+        }
+        if ($lastruntime > time() - (2 * DAYSECS)) {
+            $this->content->text = html_writer::tag('p', get_string('timespenttasknotrunningregularly', 'block_dedication'), ['class' => 'warning']);
+        }
+        $showtimespent = empty($this->config->show_dedication) ? false : true;
         if ($showtimespent) {
             $timespent = utils::timespent($COURSE->id, $USER->id);
             $this->content->text .= html_writer::tag('p', get_string('timespent_estimation', 'block_dedication'));
