@@ -84,10 +84,12 @@ class course extends system_report {
         $groupsentity = new groups();
         $groupsalias = $groupsentity->get_table_alias('groups');
 
+        $groupjointype = "LEFT JOIN";
         if ($PAGE->course->groupmode == VISIBLEGROUPS || has_capability('moodle/site:accessallgroups', $PAGE->context)) {
             $visiblegroups = groups_get_all_groups($PAGE->course->id, 0, $PAGE->course->defaultgroupingid, 'g.id');
         } else {
             $visiblegroups = groups_get_all_groups($PAGE->course->id, $USER->id, $PAGE->course->defaultgroupingid, 'g.id');
+            $groupjointype = "JOIN";
         }
 
         if (!empty($visiblegroups)) {
@@ -101,7 +103,7 @@ class course extends system_report {
             $vglikesql = '';
         }
 
-        $groupsentity->add_join("LEFT JOIN (
+        $groupsentity->add_join("$groupjointype (
                             SELECT gm.userid, gr.courseid, $groupidssql groupids, $groupnamesssql groupnames
                             FROM {groups_members} gm
                             JOIN {groups} gr ON gr.id = gm.groupid

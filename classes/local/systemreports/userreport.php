@@ -70,6 +70,12 @@ class userreport extends system_report {
      * @return bool
      */
     protected function can_view(): bool {
+        global $USER;
+        $userid = required_param('userid', PARAM_INT);
+        if ($userid == $USER->id) {
+            return true;
+        }
+        // Not viewing own report, check if can view others.
         return has_capability('block/dedication:viewreports', $this->get_context());
     }
 
