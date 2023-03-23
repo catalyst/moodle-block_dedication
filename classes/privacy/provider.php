@@ -52,7 +52,7 @@ class provider implements
                 'timespent' => 'privacy:metadata:block_dedication:timespent',
                 'timestart' => 'privacy:metadata:block_dedication:timestart',
             ],
-            'privacy:metadata:block_dedication'
+            'privacy:metadata'
         );
         return $collection;
     }
