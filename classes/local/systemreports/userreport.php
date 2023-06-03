@@ -39,7 +39,12 @@ class userreport extends system_report {
         $course = get_course($this->get_context()->instanceid);
         $PAGE->set_context($this->get_context());
 
-        $userid = required_param('userid', PARAM_INT);
+        $parameters = $this->get_parameters();
+
+        if(count($parameters) <= 0){
+            throw new \Exception("Missing parameter userid");
+        }
+        $userid = $parameters[0];
 
         // Our main entity, it contains all of the column definitions that we need.
         $entitymain = new dedication();
@@ -71,8 +76,14 @@ class userreport extends system_report {
      */
     protected function can_view(): bool {
         global $USER;
-        $userid = required_param('userid', PARAM_INT);
-        if ($userid == $USER->id) {
+        $parameters = $this->get_parameters();
+
+        if(count($parameters) <= 0){
+            throw new \Exception("Missing parameter userid");
+        }
+        $userid = $parameters[0];
+
+            if ($userid == $USER->id) {
             return true;
         }
         // Not viewing own report, check if can view others.
