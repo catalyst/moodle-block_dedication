@@ -83,7 +83,7 @@ class user_dedication extends datasource {
      * @return string[]
      */
     public function get_default_columns(): array {
-        return ['user:fullname', 'user:username', 'tool:timespent'];
+        return ['user:fullname', 'user:username', 'course:shortname', 'dedication:timespent'];
     }
 
     /**
@@ -92,7 +92,7 @@ class user_dedication extends datasource {
      * @return string[]
      */
     public function get_default_filters(): array {
-        return ['user:fullname', 'user:username', 'user:email'];
+        return ['user:fullname', 'user:username', 'course:shortname', 'user:email'];
     }
 
     /**
@@ -101,6 +101,6 @@ class user_dedication extends datasource {
      * @return string[]
      */
     public function get_default_conditions(): array {
-        return ['aceuser:fullnamedashboardlink'];
+        return [];
     }
 }
