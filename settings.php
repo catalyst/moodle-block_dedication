@@ -44,7 +44,3 @@ if ($ADMIN->fulltree) {
         new lang_string('configallloglifetime', 'block_dedication'), YEARSECS, PARAM_INT));
 
 }
-$ADMIN->add('reports', new admin_externalpage('block_dedication_report',
-    get_string('reporttitle', 'block_dedication'),
-    new moodle_url('/blocks/dedication/report.php')));
-

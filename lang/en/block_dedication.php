@@ -61,7 +61,6 @@ $string['privacy:metadata:block_dedication:timespent'] = 'Time spent on the cour
 $string['privacy:metadata:block_dedication:timestart'] = 'The start time of the data collected';
 $string['report_dedication'] = 'Tool Dedication Report';
 $string['report_timespent'] = 'Report Timespent';
-$string['reporttitle'] = 'Dedication Report';
 $string['user_dedication_datasource'] = 'Users Dedication';
 $string['dedication:addinstance'] = 'Allow to add dedication block';
 $string['dedication:myaddinstance'] = 'Allow to add dedication block to dashboard page';
