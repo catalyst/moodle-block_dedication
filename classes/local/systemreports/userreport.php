@@ -33,13 +33,13 @@ class userreport extends system_report {
      * Initialise report, we need to set the main table, load our entities and set columns/filters
      */
     protected function initialise(): void {
-        global $PAGE;
+        global $PAGE, $USER;
 
         // We need to ensure page context is always set, as required by output and string formatting.
         $course = get_course($this->get_context()->instanceid);
         $PAGE->set_context($this->get_context());
 
-        $userid = required_param('userid', PARAM_INT);
+        $userid = optional_param('userid', $USER->id, PARAM_INT);
 
         // Our main entity, it contains all of the column definitions that we need.
         $entitymain = new dedication();
@@ -71,7 +71,7 @@ class userreport extends system_report {
      */
     protected function can_view(): bool {
         global $USER;
-        $userid = required_param('userid', PARAM_INT);
+        $userid = optional_param('userid', $USER->id, PARAM_INT);
         if ($userid == $USER->id) {
             return true;
         }
