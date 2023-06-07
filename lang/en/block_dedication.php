@@ -93,4 +93,3 @@ $string['sessiondurationsum'] = 'Session duration (sum)';
 $string['enrolmententity'] = 'Enrolment';
 $string['enrolmentmethod'] = 'Enrolment method';
 $string['timespenttasknotrunning'] = 'Time spent calculation task has not run yet.';
-$string['timespenttasknotrunningregularly'] = 'Warning: The time spent calculation task is not running regularly';
