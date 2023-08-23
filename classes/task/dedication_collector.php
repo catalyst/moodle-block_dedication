@@ -48,8 +48,8 @@ class dedication_collector extends \core\task\scheduled_task {
             mtrace("This is the first time this task has been run, calculate data for last 12 weeks");
             // First time this task has been run - lets pull in last 12 weeks of time calculations.
             $lastruntime = time() - WEEKSECS * 12;
-        } else if ($lastruntime > time() - (6 * HOURSECS)) {
-            mtrace("This task can only be triggered every 6 hours");
+        } else if ($lastruntime > time() - (2 * HOURSECS)) {
+            mtrace("This task can only be triggered every 2 hours");
             return;
         }
         utils::generate_stats($lastruntime, time());
