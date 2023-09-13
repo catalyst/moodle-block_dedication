@@ -71,12 +71,14 @@ class manager {
         } else {
             $userid = $user->id;
         }
-        $where = 'courseid = :courseid AND userid = :userid AND timecreated >= :mintime AND timecreated <= :maxtime';
+        $where = 'courseid = :courseid AND userid = :userid AND timecreated >= :mintime AND timecreated <= :maxtime ' .
+            'AND origin != :origin';
         $params = array(
             'courseid' => $this->course->id,
             'userid' => $userid,
             'mintime' => $this->mintime,
-            'maxtime' => $this->maxtime
+            'maxtime' => $this->maxtime,
+            'origin' => 'cli',
         );
         $logs = utils::get_events_select($where, $params);
 
