@@ -297,10 +297,12 @@ class utils {
      *
      * @param int $courseid
      * @param int $duration
+     * @param bool $filter
      * @return array
      */
-    public static function get_average($courseid, $duration = null) {
-        global $DB;
+    public static function get_average($courseid, $duration = null, bool $filter = false) {
+        global $DB, $CFG, $SESSION;
+
         $params = ['courseid' => $courseid];
         $sqlextra = '';
         if (!empty($duration)) {
@@ -308,14 +310,35 @@ class utils {
             $params['since'] = time() - $duration;
         }
 
-        $sqltotal = "SELECT SUM(timespent)
+        if (!empty($SESSION->local_ace_filtervalues) && $filter && file_exists($CFG->dirroot . '/local/ace/locallib.php')) {
+            require_once($CFG->dirroot . '/local/ace/locallib.php');
+            list($joinsql, $wheresql, $filterparams) = local_ace_generate_filter_sql($SESSION->local_ace_filtervalues);
+
+            $sqltotal = "SELECT SUM(bd.timespent)
+                        FROM {block_dedication} bd
+                        JOIN {user} u ON u.id = bd.userid
+                        " . implode(" ", $joinsql) . "
+                        WHERE bd.courseid = :courseid" . $sqlextra . "
+                        " . implode(" ", $wheresql);
+            $sqlusers = "SELECT count(DISTINCT bd.userid)
+                        FROM {block_dedication} bd
+                        JOIN {user} u ON u.id = bd.userid
+                        " . implode(" ", $joinsql) . "
+                        WHERE bd.courseid = :courseid" . $sqlextra . "
+                        " . implode(" ", $wheresql);
+            $params = array_merge($params, $filterparams);
+            $totaldedication = $DB->get_field_sql($sqltotal, $params);
+            $totalusers = $DB->get_field_sql($sqlusers, $params);
+        } else {
+            $sqltotal = "SELECT SUM(timespent)
                        FROM {block_dedication}
-                      WHERE courseid = :courseid". $sqlextra;
-        $sqlusers = "SELECT count(DISTINCT userid)
+                      WHERE courseid = :courseid" . $sqlextra;
+            $sqlusers = "SELECT count(DISTINCT userid)
                        FROM {block_dedication}
-                      WHERE courseid = :courseid". $sqlextra;
-        $totaldedication = $DB->get_field_sql($sqltotal, $params);
-        $totalusers = $DB->get_field_sql($sqlusers, $params);
+                      WHERE courseid = :courseid" . $sqlextra;
+            $totaldedication = $DB->get_field_sql($sqltotal, $params);
+            $totalusers = $DB->get_field_sql($sqlusers, $params);
+        }
 
         return ['total' => self::format_dedication($totaldedication),
                 'average' => self::format_dedication(!empty($totalusers) ? $totaldedication / $totalusers : 0)];
