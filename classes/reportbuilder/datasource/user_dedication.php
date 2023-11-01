@@ -74,6 +74,10 @@ class user_dedication extends datasource {
         $this->add_filters_from_entity($coursecore->get_entity_name());
         $this->add_filters_from_entity($dedication->get_entity_name());
 
+        $this->add_conditions_from_entity($usercore->get_entity_name());
+        $this->add_conditions_from_entity($coursecore->get_entity_name());
+        $this->add_conditions_from_entity($dedication->get_entity_name());
+
     }
 
 
