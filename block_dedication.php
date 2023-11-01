@@ -101,7 +101,7 @@ class block_dedication extends block_base {
      */
     public function applicable_formats() {
         return ['admin' => false,
-                'site-index' => false,
+                'site-index' => true,
                 'course-view' => true,
                 'mod' => false,
                 'my' => false];
