@@ -62,7 +62,6 @@ class userreport extends system_report {
 
         // Set if report can be downloaded.
         $this->set_downloadable(true);
-        $this->set_initial_sort_column('dedication:timestart', SORT_ASC);
     }
 
     /**

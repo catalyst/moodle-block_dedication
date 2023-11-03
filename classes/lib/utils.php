@@ -89,6 +89,9 @@ class utils {
             return get_string('none');
         }
         $totalsecs = abs($totalsecs);
+		$ts2 = abs($totalsecs);
+		$th2 = round($totalsecs / 3600 ,3);
+		
 
         $str = new \stdClass();
         $str->hour = get_string('hour');
@@ -103,13 +106,21 @@ class utils {
         $mins = floor($remainder / MINSECS);
         $secs = round($remainder - ($mins * MINSECS), 2);
 
-        $ss = ($secs == 1) ? $str->sec : $str->secs;
-        $sm = ($mins == 1) ? $str->min : $str->mins;
-        $sh = ($hours == 1) ? $str->hour : $str->hours;
+        // $ss = ($secs == 1) ? $str->sec : $str->secs;
+        // $sm = ($mins == 1) ? $str->min : $str->mins;
+        // $sh = ($hours == 1) ? $str->hour : $str->hours;
+
+        $ss = $str->sec;
+        $sm = $str->min;
+        $sh = $str->hour;
 
         $ohours = '';
         $omins = '';
         $osecs = '';
+		
+		$hours = str_pad($hours, 4, '0', STR_PAD_LEFT);
+		$mins = str_pad($mins, 2, '0', STR_PAD_LEFT);
+		$secs = str_pad($secs, 2, '0', STR_PAD_LEFT);
 
         if ($hours) {
             $ohours = $hours . ' ' . $sh;
@@ -120,20 +131,31 @@ class utils {
         if ($secs) {
             $osecs = $secs . ' ' . $ss;
         }
-
+		
+		$act_hour =  ' = ' . $th2 . ' Hours';
+		// $combo_hour =  $hours . ' ' . $sh . ' ' . $mins . ' ' . $sm . ' ' . $secs . ' ' . $ss. ' = ' . $th2 . ' Hours';
+		$combo_hour =  $ohours . ' ' . $omins . ' ' . $osecs . ' = ' . $th2 . ' Hours';
+		
+		
+/*AZIM*/
         if ($hours) {
-            return trim($ohours . ' ' . $omins);
+			return trim($combo_hour);
+            // return trim($ohours . ' ' . $omins);
         }
         if ($mins) {
             if ($mins < 15) { // If less than 15min, show seconds value as well as minutes.
-                return trim($omins . ' ' . $osecs);
+                // return trim($omins . ' ' . $osecs);
+				return trim($combo_hour);
             } else { // If over 15min, just display a minute value.
-                return trim($omins);
+                // return trim($omins);
+				return trim($combo_hour);
             }
         }
         if ($secs) {
-            return $osecs;
+            // return $osecs
+			return trim($combo_hour);
         }
+/*AZIM*/
         return get_string('none');
     }
 
