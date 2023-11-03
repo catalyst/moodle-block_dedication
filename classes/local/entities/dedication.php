@@ -97,6 +97,7 @@ class dedication extends base {
             ->add_joins($this->get_joins())
             ->add_fields("$dedicationalias.timespent")
             ->set_type(column::TYPE_INTEGER)
+            ->set_is_sortable(true)
             ->add_callback(static function(?int $value) {
                 $format = utils::format_dedication($value);
                 return $format;
@@ -110,6 +111,7 @@ class dedication extends base {
             ->add_joins($this->get_joins())
             ->add_fields("$dedicationalias.timestart")
             ->set_type(column::TYPE_TIMESTAMP)
+			->set_is_sortable(true)
             ->set_callback([format::class, 'userdate']);
 
         return $columns;
