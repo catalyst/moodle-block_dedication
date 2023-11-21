@@ -64,7 +64,9 @@ $sessionlimit = get_config('block_dedication', 'ignore_sessions_limit');
 if (!empty($sessionlimit)) {
     echo html_writer::div(get_string('excludesessionslessthan', 'block_dedication', utils::format_dedication($sessionlimit)));
 }
-$report = system_report_factory::create(userreport::class, context_course::instance($courseid));
+
+$params = ['userid' => $userid];
+$report = system_report_factory::create(userreport::class, context_course::instance($courseid), '', '', 0, $params);
 
 echo $report->output();
 echo $OUTPUT->footer();

@@ -39,7 +39,10 @@ class userreport extends system_report {
         $course = get_course($this->get_context()->instanceid);
         $PAGE->set_context($this->get_context());
 
-        $userid = optional_param('userid', $USER->id, PARAM_INT);
+        $userid = $this->get_parameter('userid', $USER->id, PARAM_INT);
+        if ($userid <> $USER->id) {
+            require_capability('block/dedication:viewreports', $this->get_context());
+        }
 
         // Our main entity, it contains all of the column definitions that we need.
         $entitymain = new dedication();
