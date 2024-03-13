@@ -33,7 +33,7 @@ class utils {
      *
      * @var array
      */
-    public static $logstores = array('logstore_standard');
+    public static $logstores = array('logstore_standard', 'logstore_standardqueued');
 
     /**
      * Return formatted events from logstores.
