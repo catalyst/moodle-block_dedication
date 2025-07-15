@@ -16,12 +16,20 @@ NOTE: This new version of the block differs from the original version in some si
 7. Custom reportbuilder source is available for site-level reporting (under admin > reports > reportbuilder > custom reports).
 8. Course and user-level reporting now uses the reportbuilder api available in Moodle 4.0.
 
+
+# Moodle 4.5 Compatibility
+
+This fork declares compatibility with Moodle 4.5. No functional changes were made beyond updating the version metadata in `version.php`.
+
+
 # Branches
 
 | Moodle version    | Branch             |
 | ----------------- | ------------------ |
 | Moodle 4.0 - 4.3  | `MOODLE_400_STABLE` | 
 | Moodle 4.4        | `MOODLE_404_STABLE` |
+| Moodle 4.5        | `MOODLE_405_STABLE` | <!-- Add this line -->
+
 
 # How dedication time is estimated?
 Time is estimated based in the concepts of Session and Session duration applied
