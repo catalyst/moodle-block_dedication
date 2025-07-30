@@ -21,8 +21,7 @@ NOTE: This new version of the block differs from the original version in some si
 | Moodle version    | Branch             |
 | ----------------- | ------------------ |
 | Moodle 4.0 - 4.3  | `MOODLE_400_STABLE` | 
-| Moodle 4.4        | `MOODLE_404_STABLE` |
-| Moodle 4.5        | `MOODLE_405_STABLE` |
+| Moodle 4.4 - 4.5  | `MOODLE_404_STABLE` |
 
 
 # How dedication time is estimated?
