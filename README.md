@@ -23,7 +23,6 @@ NOTE: This new version of the block differs from the original version in some si
 | Moodle 4.0 - 4.3  | `MOODLE_400_STABLE` | 
 | Moodle 4.4 - 4.5  | `MOODLE_404_STABLE` |
 
-
 # How dedication time is estimated?
 Time is estimated based in the concepts of Session and Session duration applied
 to Moodle's log entries:
