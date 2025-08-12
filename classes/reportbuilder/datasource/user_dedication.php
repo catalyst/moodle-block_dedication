@@ -144,7 +144,7 @@ class user_dedication extends datasource {
                 'course' => $course,
                 'user' => $user,
             ]);
-        $completion = $completionentity->get_table_alias('course_completion');
+        $completion = $completionentity->get_table_alias('course_completions');
         $this->add_entity($completionentity
             ->add_joins($userentity->get_joins())
             ->add_join("
