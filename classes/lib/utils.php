@@ -300,7 +300,7 @@ class utils {
      * @param bool $filter
      * @return array
      */
-    public static function get_average($courseid, $duration = null, bool $filter = false) {
+    public static function get_average($courseid, $duration = null, bool $filter = false, array $groups = []) {
         global $DB, $CFG, $SESSION;
 
         $params = ['courseid' => $courseid];
@@ -333,9 +333,25 @@ class utils {
             $sqltotal = "SELECT SUM(timespent)
                        FROM {block_dedication}
                       WHERE courseid = :courseid" . $sqlextra;
+
             $sqlusers = "SELECT count(DISTINCT userid)
                        FROM {block_dedication}
                       WHERE courseid = :courseid" . $sqlextra;
+
+            if (!empty($groups)) {
+
+                [$sqlgroups, $paramsmembers] = $DB->get_in_or_equal($groups, SQL_PARAMS_NAMED);
+                $sqlmembers = "SELECT id, userid from {groups_members} WHERE groupid {$sqlgroups}";
+                $userids = $DB->get_records_sql_menu($sqlmembers, $paramsmembers);
+                $userids = array_values($userids);
+
+                [$sqlmembers, $paramsmembers] = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+                $sqltotal .= " AND userid {$sqlmembers}";
+                $sqlusers .= " AND userid {$sqlmembers}";
+
+                $params = array_merge($params, $paramsmembers);
+            }
+
             $totaldedication = $DB->get_field_sql($sqltotal, $params);
             $totalusers = $DB->get_field_sql($sqlusers, $params);
         }

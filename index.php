@@ -47,12 +47,22 @@ $PAGE->add_body_class('limitedwidth');
 $PAGE->set_title("$course->fullname: ".get_string('sessionduration', 'block_dedication'));
 $PAGE->set_heading($course->fullname);
 
+// Fetch the current groupid.
+$groups = groups_get_user_groups($courseid);
+$groups = array_pop($groups);
+
 echo $OUTPUT->header();
-$average = \block_dedication\lib\utils::get_average($course->id);
+$average = \block_dedication\lib\utils::get_average($course->id, null, false, $groups);
 
 echo $OUTPUT->heading(get_string('timespentincourse', 'block_dedication'));
 echo html_writer::div(get_string('totaltimespent', 'block_dedication', $average['total']));
 echo html_writer::div(get_string('averagetimespent', 'block_dedication', $average['average']));
+if (!empty($groups)) {
+    [$groupssql, $groupsparams] = $DB->get_in_or_equal($groups);
+    $groupsnamessql = "SELECT CONCAT(name) FROM {groups} WHERE id {$groupssql}";
+    $groupsnames = $DB->get_field_sql($groupsnamessql, $groupsparams);
+    echo html_writer::div(get_string('groups', 'block_dedication', $groupsnames));
+}
 
 $config = get_config('block_dedication');
 

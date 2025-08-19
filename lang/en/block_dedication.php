@@ -77,6 +77,7 @@ $string['period'] = 'Period since <em>{$a->mintime}</em> to <em>{$a->maxtime}</e
 $string['perioddiff'] = '<strong>Elapsed time:</strong>  {$a}';
 $string['totaltimespent'] = '<strong>Total of all time spent in course:</strong> {$a}';
 $string['averagetimespent'] = '<strong>Average time spent in course:</strong> {$a}';
+$string['groups'] = '<strong>Group(s):</strong> {$a}';
 $string['sessionstart'] = 'Session start';
 $string['userdedication'] = 'Detailed course dedication of <em>{$a}</em>.';
 $string['timespentincourse'] = 'Time spent in course';
